@@ -13,8 +13,11 @@
         <testsuite name="RESP">
             <file>tests/RESP/DecoderTest.php</file>
         </testsuite>
+        <testsuite name="Redis">
+            <file>tests/Redis/ConnectivityTest.php</file>
+            <file>tests/Redis/PassThruTest.php</file>
+        </testsuite>
         <testsuite name="StaticModels">
-            <file>tests/StaticModels/ConnectivityTest.php</file>
             <file>tests/StaticModels/CreateModelTest.php</file>
         </testsuite>
     </testsuites>

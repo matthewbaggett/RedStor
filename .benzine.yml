@@ -1,0 +1,6 @@
+benzine:
+  application:
+    name: RedStor
+    class: RedStor\RedStor
+  logging:
+    format_message: "%level_name% > %message%"

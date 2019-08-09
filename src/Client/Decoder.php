@@ -2,17 +2,20 @@
 
 namespace RedStor\Client;
 
+use RedStor\Exceptions\RESPDecodeException;
+
 class Decoder{
     const REDIS_SEPERATOR = "\r\n";
+
 
     public function decode($data){
         #\Kint::dump($data);
         list($data, $output) = $this->__decode($data);
         return $output;
     }
+
     public function __decode($data)
     {
-
         if(!$data){
             return null;
         }
@@ -38,17 +41,21 @@ class Decoder{
                 $stringLength = (int) $payload;
                 $string = substr($data, 0, $stringLength);
                 $newData = substr($data, $stringLength + 2);
-                \Kint::dump($stringLength, $string, $data, $newData);
                 return [$newData, $string];
+                break;
+
+            case '+': // Simple Strings
+                $output = (string) $payload;
                 break;
 
             default:
                 #\Kint::dump($originalInput);
-                throw new \Exception(sprintf(
+                throw new RESPDecodeException(sprintf(
                     "Can't decode RESP begining with \"%s\". \nComplete message:\"%s\".",
                     $symbol,
                     $originalInput
                 ));
+
         }
         #\Kint::dump($originalInput, $output);
         return [$data, $output];

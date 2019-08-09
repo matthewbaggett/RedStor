@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/benzine-framework/benzine.git",
-                "reference": "040ef1b1c9b5fb47ef6364ad728b491ac738cb7f"
+                "reference": "da9f71580f71e3b4858353983e147ef2e8e0da21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/benzine-framework/benzine/zipball/040ef1b1c9b5fb47ef6364ad728b491ac738cb7f",
-                "reference": "040ef1b1c9b5fb47ef6364ad728b491ac738cb7f",
+                "url": "https://api.github.com/repos/benzine-framework/benzine/zipball/da9f71580f71e3b4858353983e147ef2e8e0da21",
+                "reference": "da9f71580f71e3b4858353983e147ef2e8e0da21",
                 "shasum": ""
             },
             "require": {
@@ -64,7 +64,7 @@
                     "email": "matthew@baggett.me"
                 }
             ],
-            "time": "2019-08-07T22:52:54+00:00"
+            "time": "2019-08-09T20:07:55+00:00"
         },
         {
             "name": "benzine/benzine-cache",
@@ -121,12 +121,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/benzine-framework/benzine-configuration.git",
-                "reference": "ed7275f47ff3193d54ce3794ba2649adb1674b66"
+                "reference": "91c175a9de4f1d16a033f0caeea0902df8dd07de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/benzine-framework/benzine-configuration/zipball/ed7275f47ff3193d54ce3794ba2649adb1674b66",
-                "reference": "ed7275f47ff3193d54ce3794ba2649adb1674b66",
+                "url": "https://api.github.com/repos/benzine-framework/benzine-configuration/zipball/91c175a9de4f1d16a033f0caeea0902df8dd07de",
+                "reference": "91c175a9de4f1d16a033f0caeea0902df8dd07de",
                 "shasum": ""
             },
             "require": {
@@ -149,7 +149,7 @@
                     "email": "matthew@baggett.me"
                 }
             ],
-            "time": "2019-07-31T23:29:28+00:00"
+            "time": "2019-08-09T20:07:54+00:00"
         },
         {
             "name": "benzine/benzine-container",
@@ -301,12 +301,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/benzine-framework/benzine-html.git",
-                "reference": "fcf87a8be7cdfac2fe384c0f82a86bd3398a14bc"
+                "reference": "f78ac9d68c67fa39b44c67cc3c1386d3213dd439"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/benzine-framework/benzine-html/zipball/fcf87a8be7cdfac2fe384c0f82a86bd3398a14bc",
-                "reference": "fcf87a8be7cdfac2fe384c0f82a86bd3398a14bc",
+                "url": "https://api.github.com/repos/benzine-framework/benzine-html/zipball/f78ac9d68c67fa39b44c67cc3c1386d3213dd439",
+                "reference": "f78ac9d68c67fa39b44c67cc3c1386d3213dd439",
                 "shasum": ""
             },
             "require": {
@@ -334,7 +334,7 @@
                     "email": "matthew@baggett.me"
                 }
             ],
-            "time": "2019-08-07T22:52:53+00:00"
+            "time": "2019-08-09T20:07:55+00:00"
         },
         {
             "name": "benzine/benzine-http-assets",
@@ -372,12 +372,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/benzine-framework/benzine-log.git",
-                "reference": "85312a305af6878dc09a55274994b00eb0eb301b"
+                "reference": "ffe2ba7ec137defcd919a547b647ff45f7f0343b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/benzine-framework/benzine-log/zipball/85312a305af6878dc09a55274994b00eb0eb301b",
-                "reference": "85312a305af6878dc09a55274994b00eb0eb301b",
+                "url": "https://api.github.com/repos/benzine-framework/benzine-log/zipball/ffe2ba7ec137defcd919a547b647ff45f7f0343b",
+                "reference": "ffe2ba7ec137defcd919a547b647ff45f7f0343b",
                 "shasum": ""
             },
             "require": {
@@ -404,7 +404,7 @@
                     "email": "matthew@baggett.me"
                 }
             ],
-            "time": "2019-08-03T00:52:28+00:00"
+            "time": "2019-08-09T20:12:13+00:00"
         },
         {
             "name": "benzine/benzine-middleware",
@@ -3559,20 +3559,20 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.9.1",
+            "version": "1.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "e6828efaba2c9b79f4499dae1d66ef8bfa7b2b72"
+                "reference": "8d0a041a565fc1e927e75f1d1bea5f34edf6e7d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/e6828efaba2c9b79f4499dae1d66ef8bfa7b2b72",
-                "reference": "e6828efaba2c9b79f4499dae1d66ef8bfa7b2b72",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/8d0a041a565fc1e927e75f1d1bea5f34edf6e7d1",
+                "reference": "8d0a041a565fc1e927e75f1d1bea5f34edf6e7d1",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1"
+                "php": "^7.2"
             },
             "replace": {
                 "myclabs/deep-copy": "self.version"
@@ -3580,6 +3580,8 @@
             "require-dev": {
                 "doctrine/collections": "^1.0",
                 "doctrine/common": "^2.6",
+                "phpstan/phpstan": "^0.9.2",
+                "phpstan/phpstan-phpunit": "^0.9.4",
                 "phpunit/phpunit": "^7.1"
             },
             "type": "library",
@@ -3603,7 +3605,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2019-04-07T13:18:21+00:00"
+            "time": "2019-08-09T12:38:39+00:00"
         },
         {
             "name": "nicmart/string-template",

@@ -16,6 +16,4 @@ RUN sed -i 's|disable_functions|#disabled_functions|g' /etc/php/7.3/cli/php.ini 
         /app/bin/redstor \
         /etc/service/*/run
 
-CMD bin/redstor
-
 HEALTHCHECK NONE

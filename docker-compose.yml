@@ -5,9 +5,19 @@ volumes:
   persist-mysql:
 
 services:
+  socat:
+    image: alpine/socat
+    command: tcp-listen:6379,fork,reuseaddr tcp-connect:redstor:6379
+    ports:
+      - '127.0.0.54:6379:6379'
+    depends_on:
+      redstor:
+        condition: service_healthy
+
   redstor:
     #image: redstor/redstor
     restart: always
+    scale: 5
     build:
       context: .
       target: redstor
@@ -16,16 +26,17 @@ services:
         condition: service_healthy
       mysql:
         condition: service_healthy
-    ports:
-      - '127.0.0.54:6379:6379'
     volumes:
       - ./:/app
-    #healthcheck:
-    #  test: ["CMD", "redis-cli", "PING"]
-    #  interval: 10s
-    #  timeout: 10s
-    #  retries: 3
-    #  start_period: 10s
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    environment:
+      REDIS_HOST: tcp://redis:6379
+      MYSQL_HOST: tcp://redstor:m4&E3h9QTZ4FfqueZ^eN@mysql:3306
 
   redis:
     image: redis:5

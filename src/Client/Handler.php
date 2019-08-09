@@ -3,11 +3,17 @@
 namespace RedStor\Client;
 
 use Closure;
+use Predis\Client;
 use Psr\Log\LoggerInterface;
+use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
+use RedStor\Exceptions\RESPDecodeException;
+use ⌬\Log\Logger;
 
 class Handler{
 
+    /** @var LoopInterface */
+    protected $loop;
     /** @var LoggerInterface */
     protected $logger;
     /** @var ConnectionInterface */
@@ -16,85 +22,85 @@ class Handler{
     protected $decoder;
     /** @var Encoder */
     protected $encoder;
+    /** @var Passthru */
+    protected $passthru;
+    /** @var Client */
+    protected $redis;
 
     public function __construct(
-        LoggerInterface $logger,
+        LoopInterface $loop,
+        Logger $logger,
         ConnectionInterface $connection,
         Decoder $decoder,
-        Encoder $encoder
+        Encoder $encoder,
+        Passthru $passthru,
+        Client $redis
     )
     {
+        $this->loop = $loop;
         $this->logger = $logger;
         $this->connection = $connection;
         $this->decoder = $decoder;
         $this->encoder = $encoder;
+        $this->passthru = $passthru;
+        $this->redis = $redis;
         $this->__attachToConnection();
     }
 
-    protected function getClientRemoteAddress(): string
+    public function __attachToConnection()
     {
-        $host = parse_url($this->connection->getRemoteAddress());
-        return isset($host['host']) && isset($host['port'])
-            ? "{$host['host']}:{$host['port']}"
-            : "UNKNOWN";
-    }
-
-    public function __attachToConnection(){
-        $this->connection->on('data', Closure::fromCallable([$this, 'receiveClientMessage']));
+        $this->connection->on('data',  Closure::fromCallable([$this, 'receiveClientMessage']));
         $this->connection->on('error', Closure::fromCallable([$this, 'handleClientException']));
-        $this->connection->on('end', Closure::fromCallable([$this, 'endClient']));
+        $this->connection->on('end',   Closure::fromCallable([$this, 'endClient']));
         $this->connection->on('close', Closure::fromCallable([$this, 'closeClient']));
-
-        $this->logger->info(sprintf(
-            "[%s] => %s",
-            $this->getClientRemoteAddress(),
-            "Connected"
-        ));
     }
 
     protected function receiveClientMessage($data)
     {
-        echo "Data: {$data}\n";
+        $debugData = str_replace("\n","\\n", $data);
+        $debugData = str_replace("\r","\\r", $debugData);
+
+        #\Kint::dump($data);
+        if(trim($data) == 'PING'){
+            #$data = "*1\r\n$4\r\nPING\r\n";
+            $this->encoder->sendInline($this->connection, "+PING");
+            return;
+        }
+
         $parsedData = $this->decoder->decode($data);
 
-        \Kint::dump($parsedData);
+        $this->logger->info(sprintf(
+            "[%s] => %s (%s)",
+            $this->connection->getRemoteAddress(),
+            implode(" ", $parsedData),
+            trim($debugData),
+        ));
 
-#        $this->logger->info(sprintf(
-#            "[%s] => %s",
-#            $this->getClientRemoteAddress(),
-#            implode(" ", $parsedData)
-#        ));
+        #\Kint::dump($parsedData[0]);
 
         switch($parsedData[0]){
+            case 'RESTART':
+                $this->encoder->writeStrings($this->connection, ["+RESTART", "Server is now restarting"]);
+                $this->connection->end();
+                $this->loop->addTimer(1.0, function(){
+                    die("Restarting!\n");
+                });
+                break;
             case 'PING':
                 $this->encoder->sendPong($this->connection, isset($parsedData[1]) ? $parsedData[1] : null);
                 break;
+            case in_array($parsedData[0], $this->passthru->getPassthruCommands()):
+                $this->passthru->passthru($this->connection, $parsedData);
+                break;
+            default:
+                $this->encoder->sendError($this->connection, sprintf("Sorry, %s is not a valid command.", $parsedData[0]));
         }
 
     }
 
-    protected function endClient()
-    {
-        #$this->logger->info(sprintf(
-        #    "[%s] == EndClient",
-        #    $this->getClientRemoteAddress()
-        #));
-    }
+    protected function endClient() {}
 
-    protected function closeClient()
-    {
-        $this->logger->info(sprintf(
-            "[%s] == CloseClient",
-            $this->getClientRemoteAddress()
-        ));
-    }
+    protected function closeClient() {}
 
-    protected function handleClientException(\Exception $e)
-    {
-        $this->logger->critical(sprintf(
-            "[%s] ** %s",
-            $this->getClientRemoteAddress(),
-            $e->getMessage()
-        ));
-    }
+    protected function handleClientException(\Exception $e) {}
 }
