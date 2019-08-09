@@ -14,16 +14,20 @@ class Handler{
     protected $connection;
     /** @var Decoder  */
     protected $decoder;
+    /** @var Encoder */
+    protected $encoder;
 
     public function __construct(
         LoggerInterface $logger,
         ConnectionInterface $connection,
-        Decoder $decoder
+        Decoder $decoder,
+        Encoder $encoder
     )
     {
         $this->logger = $logger;
         $this->connection = $connection;
         $this->decoder = $decoder;
+        $this->encoder = $encoder;
         $this->__attachToConnection();
     }
 
@@ -50,15 +54,23 @@ class Handler{
 
     protected function receiveClientMessage($data)
     {
+        echo "Data: {$data}\n";
         $parsedData = $this->decoder->decode($data);
 
         \Kint::dump($parsedData);
 
-        $this->logger->info(sprintf(
-            "[%s] => %s",
-            $this->getClientRemoteAddress(),
-            implode(" ", $parsedData)
-        ));
+#        $this->logger->info(sprintf(
+#            "[%s] => %s",
+#            $this->getClientRemoteAddress(),
+#            implode(" ", $parsedData)
+#        ));
+
+        switch($parsedData[0]){
+            case 'PING':
+                $this->encoder->sendPong($this->connection, isset($parsedData[1]) ? $parsedData[1] : null);
+                break;
+        }
+
     }
 
     protected function endClient()

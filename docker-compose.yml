@@ -20,6 +20,12 @@ services:
       - '127.0.0.54:6379:6379'
     volumes:
       - ./:/app
+    #healthcheck:
+    #  test: ["CMD", "redis-cli", "PING"]
+    #  interval: 10s
+    #  timeout: 10s
+    #  retries: 3
+    #  start_period: 10s
 
   redis:
     image: redis:5
