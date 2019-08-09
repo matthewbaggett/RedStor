@@ -69,16 +69,21 @@ class Handler{
 
         $parsedData = $this->decoder->decode($data);
 
-        $this->logger->info(sprintf(
-            "[%s] => %s (%s)",
-            $this->connection->getRemoteAddress(),
-            implode(" ", $parsedData),
-            trim($debugData),
-        ));
+        $displayableData = trim(implode(' ', $parsedData));
+        if(in_array($displayableData, ['PING'])) {
+            // supress these messages.
+        }else{
+            $this->logger->info(sprintf(
+                '[%s] => %s (%s)',
+                $this->connection->getRemoteAddress(),
+                $displayableData,
+                trim($debugData),
+                ));
+        }
 
-        #\Kint::dump($parsedData[0]);
+        //\Kint::dump($parsedData[0]);
 
-        switch($parsedData[0]){
+        switch ($parsedData[0]) {
             case 'RESTART':
                 $this->encoder->writeStrings($this->connection, ["+RESTART", "Server is now restarting"]);
                 $this->connection->end();

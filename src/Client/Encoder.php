@@ -23,12 +23,15 @@ class Encoder{
         $debugData = str_replace("\n","\\n", $data);
         $debugData = str_replace("\r","\\r", $debugData);
         $decodedData = (new Decoder())->decode($data);
-        $this->logger->info(sprintf(
-            "[%s] <= %s (%s)\n",
-            $connection->getRemoteAddress(),
-            is_array($decodedData) ? implode(" ", $decodedData) : "\"{$decodedData}\"",
-            trim($debugData)
-        ));
+        $displayableData = is_array($decodedData) ? implode(' ', $decodedData) : "\"{$decodedData}\"";
+        if(in_array(trim($displayableData), ['PING'])) {
+            $this->logger->info(sprintf(
+                "[%s] <= %s (%s)\n",
+                $connection->getRemoteAddress(),
+                $displayableData,
+                trim($debugData)
+            ));
+        }
         $connection->write($data);
     }
 
