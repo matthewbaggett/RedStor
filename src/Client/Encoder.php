@@ -24,7 +24,7 @@ class Encoder
         $debugData = str_replace("\r", '\\r', $debugData);
         $decodedData = (new Decoder())->decode($data);
         $displayableData = is_array($decodedData) ? implode(' ', $decodedData) : "\"{$decodedData}\"";
-        if(in_array(trim($displayableData), ['PING'])) {
+        if (in_array(trim($displayableData), ['PING'], true)) {
             $this->logger->info(sprintf(
                 "[%s] <= %s (%s)\n",
                 $connection->getRemoteAddress(),

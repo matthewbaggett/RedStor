@@ -4,6 +4,8 @@ namespace RedStor\SDK\Types;
 class IntType
     implements TypeInterface
 {
+    use SerializableType;
+
     public function isPrimaryKey(): bool
     {
         return false;
@@ -26,7 +28,7 @@ class IntType
 
     public function getSolrType(): string
     {
-        // TODO: Implement getSolrType() method.
+        return "pint";
     }
 
 }

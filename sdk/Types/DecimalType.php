@@ -4,6 +4,8 @@ namespace RedStor\SDK\Types;
 class DecimalType
     implements TypeInterface
 {
+    use SerializableType;
+
     public function isPrimaryKey(): bool
     {
         return false;
@@ -26,7 +28,7 @@ class DecimalType
 
     public function getSolrType(): string
     {
-        // TODO: Implement getSolrType() method.
+        return "pdouble";
     }
 
 }

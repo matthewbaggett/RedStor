@@ -1,11 +1,15 @@
-.PHONY: tests redstor-restart redis-ping
+.PHONY: tests redstor-restart redis-ping clean redis-benchmark redis-benchmark-real redstor-cli
 
-tests: redstor-restart
+clean:
+	-@vendor/bin/php-cs-fixer fix
+
+tests: clean
 	docker-compose run --rm redstor \
 		vendor/bin/phpunit \
 			--stop-on-error \
 			--stop-on-failure \
-			--no-coverage
+			--no-coverage \
+			--testsuite=StaticModels
 
 redis-ping:
 	docker-compose run --rm redis \
@@ -14,6 +18,10 @@ redis-ping:
 redstor-restart:
 	docker-compose run --rm redis \
 		redis-cli -h socat -p 6379 RESTART
+
+redstor-cli:
+	docker-compose run --rm redis \
+		redis-cli -h socat -p 6379
 
 redis-benchmark:
 	echo "RedStor:"

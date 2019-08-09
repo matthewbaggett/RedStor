@@ -60,7 +60,7 @@ services:
     ports:
       - '127.0.0.54:3306:3306'
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      test: ["CMD", "mysqladmin", "ping", "--silent", "-hmysql", "-uroot", "-pz7L4evNETrmnRiU6x3am"]
       start_period: 10s
       interval: 10s
       timeout: 10s
@@ -70,3 +70,14 @@ services:
       MYSQL_USER: redstor
       MYSQL_PASSWORD: m4&E3h9QTZ4FfqueZ^eN
       MYSQL_DATABASE: redstor
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "127.0.0.54:8081:8081"

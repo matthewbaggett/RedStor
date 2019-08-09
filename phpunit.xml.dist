@@ -15,6 +15,7 @@
         </testsuite>
         <testsuite name="Redis">
             <file>tests/Redis/ConnectivityTest.php</file>
+            <file>tests/Redis/RestartTest.php</file>
             <file>tests/Redis/PassThruTest.php</file>
         </testsuite>
         <testsuite name="StaticModels">

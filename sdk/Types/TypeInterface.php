@@ -1,7 +1,9 @@
 <?php
 namespace RedStor\SDK\Types;
 
-interface TypeInterface{
+interface TypeInterface
+    extends \JsonSerializable
+{
     public function isPrimaryKey() : bool;
     public function isAutoIncrement() : bool;
 

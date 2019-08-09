@@ -1,18 +1,20 @@
 <?php
 namespace RedStor\SDK\Entities;
 
+use Predis\Pipeline\Pipeline;
 use RedStor\SDK\Types\TypeInterface;
 
 class Column
     implements EntityInterface
 {
+    const KEY_MODEL_COLUMN_DEFINITION = "RedStor:Models:%s:Columns";
     /** @var string */
     protected $name;
     /** @var TypeInterface */
     protected $type;
 
     public static function Factory(string $name = null, string $type = null) : Column {
-        new Column($name, $type);
+        return new Column($name, $type);
     }
 
     public function __construct(string $name = null, string $type = null)
@@ -25,12 +27,48 @@ class Column
         }
     }
 
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->getName(),
+            'type' => $this->getType(),
+        ];
+    }
+
+    public function create(Pipeline $pipeline, Model $model = null): Pipeline
+    {
+        $pipeline->hset(
+            sprintf(self::KEY_MODEL_COLUMN_DEFINITION, $model->getName_clean()),
+            $this->getName(),
+            json_encode($this)
+        );
+
+        return $pipeline;
+    }
+
+    public function delete(Pipeline $pipeline, Model $model = null) : Pipeline
+    {
+        $pipeline->hdel(
+            sprintf(self::KEY_MODEL_COLUMN_DEFINITION, $model->getName_clean()),
+            [$this->getName_clean()]
+        );
+        return $pipeline;
+    }
+
     /**
      * @return string
      */
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getName_clean() : string {
+        $name = $this->getName();
+        $name = preg_replace("/[^A-Za-z0-9 ]/", '', $name);
+        $name = strtolower($name);
+        $name = str_replace(" ", "-", $name);
+        return $name;
     }
 
     /**

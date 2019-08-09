@@ -69,9 +69,9 @@ class Handler
         $parsedData = $this->decoder->decode($data);
 
         $displayableData = trim(implode(' ', $parsedData));
-        if(in_array($displayableData, ['PING'])) {
+        if (in_array($displayableData, ['PING'], true)) {
             // supress these messages.
-        }else{
+        } else {
             $this->logger->info(sprintf(
                 '[%s] => %s (%s)',
                 $this->connection->getRemoteAddress(),
