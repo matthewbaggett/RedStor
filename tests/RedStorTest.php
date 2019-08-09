@@ -1,12 +1,14 @@
 <?php
+
 namespace RedStor\Tests;
 
 use Predis\Client;
+use RedStor\SDK\RedStorClient;
 use ⌬\Tests\TestCase;
 
 abstract class RedStorTest extends TestCase
 {
-    /** @var Client */
+    /** @var RedStorClient */
     protected $redis;
 
     public function setUp(): void
@@ -16,6 +18,4 @@ abstract class RedStorTest extends TestCase
             'host' => 'redstor',
         ]);
     }
-
-
 }
