@@ -1,18 +1,19 @@
 <?php
+
 namespace RedStor\Runners;
 
 use Predis\Client;
 use React\EventLoop\Factory as EventLoopFactory;
-
+use React\Socket;
 use RedStor\Client\Decoder;
 use RedStor\Client\Encoder;
 use RedStor\Client\Handler;
 use RedStor\Client\Passthru;
-use ⌬\Services\EnvironmentService;
 use ⌬\Log\Logger;
-use React\Socket;
+use ⌬\Services\EnvironmentService;
 
-class SocketRunner{
+class SocketRunner
+{
     /** @var EnvironmentService */
     protected $environmentService;
     /** @var Logger */
@@ -35,8 +36,7 @@ class SocketRunner{
         Encoder $encoder,
         Passthru $passthru,
         Client $redis
-    )
-    {
+    ) {
         $this->environmentService = $environmentService;
         $this->logger = $logger;
         $this->decoder = $decoder;
@@ -46,9 +46,10 @@ class SocketRunner{
         $this->loop = EventLoopFactory::create();
     }
 
-    public function run(){
-        /** @var EnvironmentService $environmentService */
-        $this->logger->info("Starting socket server");
+    public function run()
+    {
+        // @var EnvironmentService $environmentService
+        $this->logger->info('Starting socket server');
         $socket = new Socket\Server('0.0.0.0:6379', $this->loop);
 
         $socket->on('connection', function (Socket\ConnectionInterface $client) {

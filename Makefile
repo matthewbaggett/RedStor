@@ -8,10 +8,12 @@ tests: redstor-restart
 			--no-coverage
 
 redis-ping:
-	redis-cli -h 127.0.0.54 -p 6379 PING arse
+	docker-compose run --rm redis \
+		redis-cli -h socat -p 6379 PING arse
 
 redstor-restart:
-	redis-cli -h 127.0.0.54 -p 6379 RESTART
+	docker-compose run --rm redis \
+		redis-cli -h socat -p 6379 RESTART
 
 redis-benchmark:
 	echo "RedStor:"

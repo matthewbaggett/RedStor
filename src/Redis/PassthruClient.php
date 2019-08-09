@@ -1,4 +1,5 @@
 <?php
+
 namespace RedStor\Redis;
 
 use Predis\Client;
@@ -17,20 +18,18 @@ class PassthruClient extends Client
     {
         $response = $this->connection->executeCommand($command);
 
-
         if ($response instanceof ErrorResponseInterface) {
             $response = $this->onErrorResponse($command, $response);
         }
 
         return $response;
-
     }
 
     /**
      * Handles -ERR responses returned by Redis.
      *
-     * @param CommandInterface       $command  Redis command that generated the error.
-     * @param ErrorResponseInterface $response Instance of the error response.
+     * @param CommandInterface       $command  redis command that generated the error
+     * @param ErrorResponseInterface $response instance of the error response
      *
      * @throws ServerException
      *
@@ -38,7 +37,7 @@ class PassthruClient extends Client
      */
     protected function onErrorResponse(CommandInterface $command, ErrorResponseInterface $response)
     {
-        if ($command instanceof ScriptCommand && $response->getErrorType() === 'NOSCRIPT') {
+        if ($command instanceof ScriptCommand && 'NOSCRIPT' === $response->getErrorType()) {
             $eval = $this->createCommand('EVAL');
             $eval->setRawArguments($command->getEvalArguments());
 
