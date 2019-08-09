@@ -1,0 +1,46 @@
+{
+    "name": "benzine/red-stor",
+    "description": "Object Persistence API built ontop of Redis, MySQL & Solr.",
+    "type": "project",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Matthew Baggett",
+            "email": "matthew@baggett.me"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "RedStor\\": "src",
+            "RedStor\\SDK\\": "sdk",
+            "RedStor\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=7.3",
+        "ext-sockets": "*",
+        "react/socket": "1.3.*",
+        "benzine/benzine": "dev-master",
+        "benzine/benzine-cache": "dev-master",
+        "benzine/benzine-configuration": "dev-master",
+        "benzine/benzine-container": "dev-master",
+        "benzine/benzine-controllers": "dev-master",
+        "benzine/benzine-database": "dev-master",
+        "benzine/benzine-docker": "dev-master",
+        "benzine/benzine-html": "dev-master",
+        "benzine/benzine-http-assets": "dev-master",
+        "benzine/benzine-log": "dev-master",
+        "benzine/benzine-middleware": "dev-master",
+        "benzine/benzine-migrator": "dev-master",
+        "benzine/benzine-redis": "dev-master",
+        "benzine/benzine-redis-queue": "dev-master",
+        "benzine/benzine-router": "dev-master",
+        "benzine/benzine-services": "dev-master",
+        "benzine/benzine-session": "dev-master",
+        "benzine/benzine-style": "dev-master",
+        "benzine/benzine-test": "dev-master",
+        "benzine/benzine-test-fake-data": "dev-master",
+        "benzine/benzine-traits": "dev-master",
+        "benzine/benzine-uuid": "dev-master"
+    }
+}

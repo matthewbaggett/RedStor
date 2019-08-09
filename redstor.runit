@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Starting /app/bin/redstor"
+while true; do
+  /usr/bin/php /app/bin/redstor
+  echo "Oh no, it crashed! Or may have been restarted!";
+done
