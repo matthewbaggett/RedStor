@@ -4,6 +4,7 @@ clean:
 	-@vendor/bin/php-cs-fixer fix
 
 tests: clean
+	docker-compose scale redstor=1
 	docker-compose run --rm redstor \
 		vendor/bin/phpunit \
 			--stop-on-error \

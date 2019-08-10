@@ -4,10 +4,10 @@ namespace RedStor\SDK\Predis\Commands;
 
 use Predis\Command\Command;
 
-class Restart extends Command
+class ModelAddColumn extends Command
 {
     public function getId()
     {
-        return 'RESTART';
+        return 'MODELADDCOLUMN';
     }
 }

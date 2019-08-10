@@ -24,7 +24,7 @@ class Encoder
         $debugData = str_replace("\r", '\\r', $debugData);
         $decodedData = (new Decoder())->decode($data);
         $displayableData = is_array($decodedData) ? implode(' ', $decodedData) : "\"{$decodedData}\"";
-        if (in_array(trim($displayableData), ['PING'], true)) {
+        if (!in_array(trim($displayableData), ['PING'], true)) {
             $this->logger->info(sprintf(
                 "[%s] <= %s (%s)\n",
                 $connection->getRemoteAddress(),
@@ -38,6 +38,11 @@ class Encoder
     public function sendError(ConnectionInterface $connection, string $message): void
     {
         $this->writeStrings($connection, ["-ERR {$message}"]);
+    }
+
+    public function sendOK(ConnectionInterface $connection): void
+    {
+        $this->writeStrings($connection, ['OK']);
     }
 
     public function sendPong(ConnectionInterface $connection, string $message = null): void

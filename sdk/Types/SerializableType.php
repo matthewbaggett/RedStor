@@ -1,4 +1,5 @@
 <?php
+
 namespace RedStor\SDK\Types;
 
 trait SerializableType

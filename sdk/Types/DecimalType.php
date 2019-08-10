@@ -1,10 +1,15 @@
 <?php
+
 namespace RedStor\SDK\Types;
 
-class DecimalType
-    implements TypeInterface
+class DecimalType implements TypeInterface
 {
     use SerializableType;
+
+    public function getName(): string
+    {
+        return 'Decimal';
+    }
 
     public function isPrimaryKey(): bool
     {
@@ -18,7 +23,7 @@ class DecimalType
 
     public function getSqlType(): string
     {
-        return "DECIMAL";
+        return 'DECIMAL';
     }
 
     public function getSqlLength(): int
@@ -28,7 +33,6 @@ class DecimalType
 
     public function getSolrType(): string
     {
-        return "pdouble";
+        return 'pdouble';
     }
-
 }

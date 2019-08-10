@@ -1,10 +1,15 @@
 <?php
+
 namespace RedStor\SDK\Types;
 
-class StringType
-    implements TypeInterface
+class StringType implements TypeInterface
 {
     use SerializableType;
+
+    public function getName(): string
+    {
+        return 'String';
+    }
 
     public function isPrimaryKey(): bool
     {
@@ -18,7 +23,7 @@ class StringType
 
     public function getSqlType(): string
     {
-        return "VARCHAR";
+        return 'VARCHAR';
     }
 
     public function getSqlLength(): int
@@ -28,7 +33,6 @@ class StringType
 
     public function getSolrType(): string
     {
-        return "text_general";
+        return 'text_general';
     }
-
 }

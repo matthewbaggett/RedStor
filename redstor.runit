@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "Starting /app/bin/redstor"
 while true; do
+  clear;
   /usr/bin/php /app/bin/redstor
 done

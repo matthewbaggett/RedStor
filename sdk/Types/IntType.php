@@ -1,10 +1,15 @@
 <?php
+
 namespace RedStor\SDK\Types;
 
-class IntType
-    implements TypeInterface
+class IntType implements TypeInterface
 {
     use SerializableType;
+
+    public function getName(): string
+    {
+        return 'Int';
+    }
 
     public function isPrimaryKey(): bool
     {
@@ -18,7 +23,7 @@ class IntType
 
     public function getSqlType(): string
     {
-        return "INT";
+        return 'INT';
     }
 
     public function getSqlLength(): int
@@ -28,7 +33,6 @@ class IntType
 
     public function getSolrType(): string
     {
-        return "pint";
+        return 'pint';
     }
-
 }

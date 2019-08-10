@@ -4,9 +4,11 @@ namespace RedStor\Client;
 
 use Closure;
 use Predis\Client;
+use Predis\PredisException;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
+use RedStor\Actions;
 use ⌬\Log\Logger;
 
 class Handler
@@ -25,6 +27,8 @@ class Handler
     protected $passthru;
     /** @var Client */
     protected $redis;
+    /** @var Actions\ActionInterface[] */
+    protected $handlerActions = [];
 
     public function __construct(
         LoopInterface $loop,
@@ -43,6 +47,14 @@ class Handler
         $this->passthru = $passthru;
         $this->redis = $redis;
         $this->__attachToConnection();
+
+        $this->handlerActions = [
+            new Actions\ModelAddColumn($this->loop, $this->encoder, $this->decoder, $this->redis),
+            new Actions\ModelCreateAction($this->loop, $this->encoder, $this->decoder, $this->redis),
+            new Actions\ModelDescribeAction($this->loop, $this->encoder, $this->decoder, $this->redis),
+            new Actions\PingAction($this->loop, $this->encoder, $this->decoder, $this->redis),
+            new Actions\RestartAction($this->loop, $this->encoder, $this->decoder, $this->redis),
+        ];
     }
 
     public function __attachToConnection()
@@ -55,52 +67,54 @@ class Handler
 
     protected function receiveClientMessage($data)
     {
-        $debugData = str_replace("\n", '\\n', $data);
-        $debugData = str_replace("\r", '\\r', $debugData);
+        try {
+            $debugData = str_replace("\n", '\\n', $data);
+            $debugData = str_replace("\r", '\\r', $debugData);
 
-        //\Kint::dump($data);
-        if ('PING' == trim($data)) {
-            //$data = "*1\r\n$4\r\nPING\r\n";
-            $this->encoder->sendInline($this->connection, '+PING');
+            // Fast return for PING.
+            if ('PING' == trim($data)) {
+                $this->encoder->sendInline($this->connection, '+PING');
 
-            return;
-        }
+                return;
+            }
 
-        $parsedData = $this->decoder->decode($data);
+            $parsedData = $this->decoder->decode($data);
 
-        $displayableData = trim(implode(' ', $parsedData));
-        if (in_array($displayableData, ['PING'], true)) {
-            // supress these messages.
-        } else {
-            $this->logger->info(sprintf(
-                '[%s] => %s (%s)',
-                $this->connection->getRemoteAddress(),
-                $displayableData,
-                trim($debugData),
+            $displayableData = trim(implode(' ', $parsedData));
+            if (in_array($displayableData, ['PING'], true)) {
+                // suppress these messages.
+            } else {
+                $this->logger->info(sprintf(
+                    '[%s] => %s (%s)',
+                    $this->connection->getRemoteAddress(),
+                    $displayableData,
+                    trim($debugData),
                 ));
-        }
+            }
 
-        //\Kint::dump($parsedData[0]);
-
-        switch ($parsedData[0]) {
-            case 'RESTART':
-                $this->encoder->writeStrings($this->connection, ['+RESTART', 'Server is now restarting']);
-                $this->connection->end();
-                $this->loop->addTimer(1.0, function () {
-                    die("Restarting!\n");
-                });
-
-                break;
-            case 'PING':
-                $this->encoder->sendPong($this->connection, $parsedData[1] ?? null);
-
-                break;
-            case in_array($parsedData[0], $this->passthru->getPassthruCommands(), true):
+            if (in_array($parsedData[0], $this->passthru->getPassthruCommands(), true)) {
                 $this->passthru->passthru($this->connection, $parsedData);
 
-                break;
-            default:
-                $this->encoder->sendError($this->connection, sprintf('Sorry, %s is not a valid command.', $parsedData[0]));
+                return;
+            }
+
+            foreach ($this->handlerActions as $handlerAction) {
+                if ($handlerAction->getCommand() == $parsedData[0]) {
+                    $handlerAction->handle($this->connection, $parsedData);
+
+                    return;
+                }
+            }
+
+            $this->encoder->sendError($this->connection, sprintf('Sorry, %s is not a valid command.', $parsedData[0]));
+        } catch (PredisException $exception) {
+            $this->logger->critical(
+                sprintf(
+                    'Exception %s: %s',
+                    get_class($exception),
+                    $exception->getMessage()
+                )
+            );
         }
     }
 
