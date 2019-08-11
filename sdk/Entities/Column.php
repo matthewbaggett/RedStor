@@ -15,7 +15,7 @@ class Column implements EntityInterface
     /** @var TypeInterface */
     protected $type;
     /** @var array */
-    protected $options;
+    protected $options = [];
 
     public function __construct(string $name = null, string $type = null, array $options = null)
     {
@@ -40,12 +40,19 @@ class Column implements EntityInterface
         return [
             'name' => $this->getName(),
             'type' => $this->getType(),
+            'options' => $this->getOptions(),
         ];
     }
 
     public function create(PredisClient $redis, Model $model = null)
     {
-        $redis->modelAddColumn($model->getName_clean(), $this->getName_clean(), $this->getType()->getName());
+        \Kint::dump(
+            $model->getName_clean(),
+            $this->getName_clean(),
+            $this->getType()->getName(),
+            json_encode($this->getOptions())
+        );
+        $redis->modelAddColumn($model->getName_clean(), $this->getName_clean(), $this->getType()->getName(), json_encode($this->getOptions()));
 
         return true;
     }
@@ -67,6 +74,7 @@ class Column implements EntityInterface
             throw new ColumnTypeDoesntExistException(sprintf("Column type %s doesn't exist.", $typeName));
         }
         $this->setType(new $typeClass());
+        $this->setOptions($redis->hgetall(sprintf(RedStor::KEY_MODEL_COLUMN_OPTIONS, $modelName, $columnName)));
 
         return $this;
     }

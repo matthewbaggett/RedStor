@@ -75,5 +75,12 @@ class CreateModelTest extends RedStorTest
             ->addColumn(Entities\Column::Factory('comment', Types\TextType::class))
             ->addColumn(Entities\Column::Factory('created', Types\DateType::class))
         ;
+
+        $this->assertEquals(true, $this->redis->rsCreateModel($users));
+        $this->assertEquals(true, $this->redis->rsCreateModel($blogPosts));
+        $this->assertEquals(true, $this->redis->rsCreateModel($comments));
+        $this->assertEquals($users, $this->redis->rsDescribeModel('users'));
+        $this->assertEquals($blogPosts, $this->redis->rsDescribeModel('posts'));
+        $this->assertEquals($comments, $this->redis->rsDescribeModel('comments'));
     }
 }

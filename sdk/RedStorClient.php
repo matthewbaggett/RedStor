@@ -11,7 +11,7 @@ use RedStor\SDK\Entities\Model;
  *
  * @method mixed restart()
  * @method mixed modelCreate(string $modelName)
- * @method mixed modelAddColumn(string $modelName, string $columnName, string $columnType)
+ * @method mixed modelAddColumn(string $modelName, string $columnName, string $columnType, string $optionsJsonEncoded)
  */
 class RedStorClient extends Client
 {

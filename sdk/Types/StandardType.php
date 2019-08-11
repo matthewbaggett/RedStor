@@ -23,8 +23,9 @@ trait StandardType
     {
         $class = get_called_class();
         $classElem = explode('\\', $class);
-        $name = reset($classElem);
+        $name = end($classElem);
+        $cleanedName = substr($name, 0, -4);
 
-        return substr($name, 0, -4);
+        return trim($cleanedName);
     }
 }
