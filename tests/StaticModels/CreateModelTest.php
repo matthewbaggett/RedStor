@@ -44,4 +44,36 @@ class CreateModelTest extends RedStorTest
 
         $this->assertEquals($model, $this->redis->rsDescribeModel('testModel'));
     }
+
+    public function testCreateABlog()
+    {
+        // Wipe the database.
+        $this->redis->flushall();
+
+        $users = Entities\Model::Factory('users')
+            ->addColumn(Entities\Column::Factory('userId', Types\KeyType::class))
+            ->addColumn(Entities\Column::Factory('username', Types\StringType::class))
+            ->addColumn(Entities\Column::Factory('email', Types\EmailType::class))
+            ->addColumn(Entities\Column::Factory('password', Types\PasswordType::class))
+            ->addColumn(Entities\Column::Factory('created', Types\DateType::class))
+            ->addColumn(Entities\Column::Factory('active', Types\BoolType::class))
+        ;
+
+        $blogPosts = Entities\Model::Factory('posts')
+            ->addColumn(Entities\Column::Factory('postId', Types\KeyType::class))
+            ->addColumn(Entities\Column::Factory('userId', Types\ForeignKeyType::class, ['relatedTo' => 'users.userId']))
+            ->addColumn(Entities\Column::Factory('title', Types\TextType::class))
+            ->addColumn(Entities\Column::Factory('post', Types\TextType::class))
+            ->addColumn(Entities\Column::Factory('created', Types\DateType::class))
+            ->addColumn(Entities\Column::Factory('published', Types\DateType::class))
+        ;
+
+        $comments = Entities\Model::Factory('comments')
+            ->addColumn(Entities\Column::Factory('commentId', Types\KeyType::class))
+            ->addColumn(Entities\Column::Factory('postId', Types\ForeignKeyType::class, ['relatedTo' => 'posts.postId']))
+            ->addColumn(Entities\Column::Factory('userId', Types\ForeignKeyType::class, ['relatedTo' => 'users.userId']))
+            ->addColumn(Entities\Column::Factory('comment', Types\TextType::class))
+            ->addColumn(Entities\Column::Factory('created', Types\DateType::class))
+        ;
+    }
 }

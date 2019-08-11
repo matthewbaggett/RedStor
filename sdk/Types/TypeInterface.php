@@ -10,6 +10,8 @@ interface TypeInterface extends \JsonSerializable
 
     public function isAutoIncrement(): bool;
 
+    public function isUnique(): bool;
+
     public function getSqlType(): string;
 
     public function getSqlLength(): int;

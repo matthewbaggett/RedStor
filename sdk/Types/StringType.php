@@ -5,21 +5,7 @@ namespace RedStor\SDK\Types;
 class StringType implements TypeInterface
 {
     use SerializableType;
-
-    public function getName(): string
-    {
-        return 'String';
-    }
-
-    public function isPrimaryKey(): bool
-    {
-        return false;
-    }
-
-    public function isAutoIncrement(): bool
-    {
-        return false;
-    }
+    use StandardType;
 
     public function getSqlType(): string
     {

@@ -8,7 +8,6 @@ define("APP_NAME", "ReddShim");
 
 require_once (APP_ROOT . "/vendor/autoload.php");
 
-echo "Startup...\n";
 /** @var Runners\SocketRunner $socketRunner */
 $socketRunner = (new RedStor())->getContainer()->get(Runners\SocketRunner::class);
 

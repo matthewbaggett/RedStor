@@ -14,8 +14,10 @@ class Column implements EntityInterface
     protected $name;
     /** @var TypeInterface */
     protected $type;
+    /** @var array */
+    protected $options;
 
-    public function __construct(string $name = null, string $type = null)
+    public function __construct(string $name = null, string $type = null, array $options = null)
     {
         if ($name) {
             $this->setName($name);
@@ -23,11 +25,14 @@ class Column implements EntityInterface
         if ($type) {
             $this->setType(new $type());
         }
+        if ($options) {
+            $this->setOptions($options);
+        }
     }
 
-    public static function Factory(string $name = null, string $type = null): Column
+    public static function Factory(string $name = null, string $type = null, array $options = null): Column
     {
-        return new Column($name, $type);
+        return new Column($name, $type, $options);
     }
 
     public function jsonSerialize()
@@ -112,6 +117,26 @@ class Column implements EntityInterface
     public function setType(TypeInterface $type): Column
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return Column
+     */
+    public function setOptions(array $options): Column
+    {
+        $this->options = $options;
 
         return $this;
     }

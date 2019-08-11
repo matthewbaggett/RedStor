@@ -2,23 +2,23 @@
 
 namespace RedStor\SDK\Types;
 
-class IntType implements TypeInterface
+class DateType implements TypeInterface
 {
     use SerializableType;
     use StandardType;
 
     public function getSqlType(): string
     {
-        return 'INT';
+        return 'DATETIME';
     }
 
     public function getSqlLength(): int
     {
-        return 12;
+        return -1;
     }
 
     public function getSolrType(): string
     {
-        return 'pint';
+        return 'pdate';
     }
 }
