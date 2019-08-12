@@ -32,16 +32,19 @@
         "benzine/benzine-http-assets": "dev-master",
         "benzine/benzine-log": "dev-master",
         "benzine/benzine-middleware": "dev-master",
-        "benzine/benzine-migrator": "dev-master",
         "benzine/benzine-redis": "dev-master",
         "benzine/benzine-redis-queue": "dev-master",
         "benzine/benzine-router": "dev-master",
         "benzine/benzine-services": "dev-master",
         "benzine/benzine-session": "dev-master",
-        "benzine/benzine-style": "dev-master",
-        "benzine/benzine-test": "dev-master",
-        "benzine/benzine-test-fake-data": "dev-master",
         "benzine/benzine-traits": "dev-master",
         "benzine/benzine-uuid": "dev-master"
+    },
+    "require-dev": {
+        "benzine/benzine-docker": "dev-master",
+        "benzine/benzine-migrator": "dev-master",
+        "benzine/benzine-style": "dev-master",
+        "benzine/benzine-test": "dev-master",
+        "benzine/benzine-test-fake-data": "dev-master"
     }
 }

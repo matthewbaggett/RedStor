@@ -35,3 +35,14 @@ redis-benchmark-real:
 	docker-compose run --rm redis \
 		redis-benchmark -h redis -c 10 -n 200 -q -t \
 			ping,set,get,incr,lpush,rpush,lpop,rpop,sadd,hset,lrange,mset
+
+build-prod:
+	composer install --no-dev
+	docker-compose \
+		-f docker-compose.yml \
+		-f docker-compose.build.yml \
+			build
+	docker-compose \
+    		-f docker-compose.yml \
+    		-f docker-compose.build.yml \
+    			push

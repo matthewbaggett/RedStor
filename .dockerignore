@@ -1,0 +1,11 @@
+.git
+Makefile
+Dockerfile
+docker-compose.*
+.php_cs
+.gitignore
+.phpunit.result.cache
+composer.*
+phpunit.xml.dist
+phpunit.xml
+tests/
