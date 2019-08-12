@@ -19,11 +19,12 @@ class PingTest extends GatewayTest
 
     public function testCreateRaw()
     {
-        $response = $this->guzzle->get("/v1/ping.json");
+        $response = $this->guzzle->get("/v1/ping");
 
         $json = json_decode($response->getBody()->getContents(), true);
 
         $this->assertArrayHasKey("Status", $json);
+
         $this->assertEquals("Okay", $json['Status']);
     }
 }

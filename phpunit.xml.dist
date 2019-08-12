@@ -23,6 +23,7 @@
         </testsuite>
         <testsuite name="Gateway">
             <file>tests/Gateway/PingTest.php</file>
+            <file>tests/Gateway/ModelTest.php</file>
         </testsuite>
     </testsuites>
 

@@ -4,8 +4,9 @@ namespace RedStor\Tests\Gateway;
 
 use GuzzleHttp\Client;
 use RedStor\Tests\RedStorTest;
+use ⌬\Tests\TestCase;
 
-abstract class GatewayTest extends RedStorTest
+abstract class GatewayTest extends TestCase
 {
     /** @var Client */
     protected $guzzle;

@@ -7,6 +7,7 @@ trait SerializableType
     public function jsonSerialize()
     {
         return [
+            'name' => $this->getName(),
             'isPrimaryKey' => $this->isPrimaryKey(),
             'isAutoIncrement' => $this->isAutoIncrement(),
             'sqlType' => $this->getSqlType(),
