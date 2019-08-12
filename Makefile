@@ -1,7 +1,9 @@
 .PHONY: tests redstor-restart redis-ping clean redis-benchmark redis-benchmark-real redstor-cli
 
 clean:
-	-@vendor/bin/php-cs-fixer fix
+	if [-a vendor/bin/php-cs-fixer ] ; then \
+		-@vendor/bin/php-cs-fixer fix; \
+	fi;
 
 tests: clean
 	docker-compose scale redstor=1
@@ -9,8 +11,7 @@ tests: clean
 		vendor/bin/phpunit \
 			--stop-on-error \
 			--stop-on-failure \
-			--no-coverage \
-			--testsuite=StaticModels
+			--no-coverage
 
 redis-ping:
 	docker-compose run --rm redis \

@@ -28,12 +28,6 @@ services:
         condition: service_healthy
     volumes:
       - ./:/app
-    healthcheck:
-      test: ["CMD", "redis-cli", "PING"]
-      interval: 10s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
     environment:
       REDIS_HOST: tcp://redis:6379
       MYSQL_HOST: tcp://redstor:m4&E3h9QTZ4FfqueZ^eN@mysql:3306
@@ -47,9 +41,10 @@ services:
       redstor:
         condition: service_healthy
     volumes:
-      - ./:app
+      - ./:/app
     environment:
-      REDSTOR_HOST: tcp://restor:6379
+      REDSTOR_HOST: tcp://redstor:6379
+      REDIS_HOST: tcp://redstor:6379
     ports:
       - '127.0.0.54:80:80'
 

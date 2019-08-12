@@ -21,6 +21,9 @@
         <testsuite name="StaticModels">
             <file>tests/StaticModels/CreateModelTest.php</file>
         </testsuite>
+        <testsuite name="Gateway">
+            <file>tests/Gateway/PingTest.php</file>
+        </testsuite>
     </testsuites>
 
     <filter>

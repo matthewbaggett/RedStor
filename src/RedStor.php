@@ -6,6 +6,12 @@ use ⌬\⌬;
 
 class RedStor extends ⌬
 {
+    public function __construct($options = [])
+    {
+        $this->isSessionsEnabled = false;
+        parent::__construct($options);
+    }
+
     public const KEY_MODEL_LIST_SET = 'RedStor:Models';
     public const KEY_MODEL_COLUMN_LIST_SET = '{RedStor:Models:%s}:Columns';
     public const KEY_MODEL_COLUMN_DEFINITION = '{RedStor:Models:%s}:Column:%s';

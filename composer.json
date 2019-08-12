@@ -20,6 +20,7 @@
         "php": ">=7.3",
         "ext-sockets": "*",
         "ext-json": "*",
+        "kint-php/kint": "^2.0",
         "react/socket": "1.3.*",
         "benzine/benzine": "dev-master",
         "benzine/benzine-cache": "dev-master",

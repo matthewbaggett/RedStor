@@ -5,6 +5,7 @@ namespace RedStor\Controllers;
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use RedStor\Controllers\Traits;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
@@ -37,7 +38,7 @@ class PingController extends HtmlController
         $this->configuration = $configuration;
         $this->redis = $redis;
         $this->logger = $logger;
-        $this->redis->client('SETNAME', $this->getCalledClassStub());
+        #$this->redis->client('SETNAME', $this->getCalledClassStub());
     }
 
     /**
