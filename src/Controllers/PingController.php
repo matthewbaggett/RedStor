@@ -4,7 +4,6 @@ namespace RedStor\Controllers;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use RedStor\Controllers\Traits;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -25,11 +24,12 @@ class PingController extends GatewayController
         $timeToPing = microtime(true);
         $this->redStorClient->ping();
         $timeToPing = microtime(true) - $timeToPing;
+
         return $response->withJson([
             'Status' => 'Okay',
             'Time' => [
-                'Redis' => number_format($timeToPing,3),
-            ]
+                'Redis' => number_format($timeToPing, 3),
+            ],
         ]);
     }
 }

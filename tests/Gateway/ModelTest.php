@@ -17,7 +17,8 @@ class ModelTest extends GatewayTest
         parent::setUpBeforeClass();
     }
 
-    public function dataProviderModels(){
+    public function dataProviderModels()
+    {
         $users = Entities\Model::Factory('users')
             ->addColumn(Entities\Column::Factory('userId', Types\KeyType::class))
             ->addColumn(Entities\Column::Factory('username', Types\StringType::class))
@@ -47,7 +48,7 @@ class ModelTest extends GatewayTest
         return [
             [$users],
             [$blogPosts],
-            [$comments]
+            [$comments],
         ];
     }
 
@@ -57,16 +58,18 @@ class ModelTest extends GatewayTest
     public function testCreateRaw(Entities\Model $model)
     {
         $response = $this->guzzle->put(
-            "/v1/model/{$model->getName_clean()}", [
-                RequestOptions::JSON => json_encode($model)
-        ]);
+            "/v1/model/{$model->getName_clean()}",
+            [
+                RequestOptions::JSON => json_encode($model),
+            ]
+        );
 
         $json = json_decode($response->getBody()->getContents(), true);
 
         \Kint::dump($json);
 
-        $this->assertArrayHasKey("Status", $json);
+        $this->assertArrayHasKey('Status', $json);
 
-        $this->assertEquals("Okay", $json['Status']);
+        $this->assertEquals('Okay', $json['Status']);
     }
 }

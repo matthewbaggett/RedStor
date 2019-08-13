@@ -27,7 +27,7 @@ abstract class GatewayController extends HtmlController
 
         $this->configuration = $configuration;
         $this->logger = $logger;
-        #$this->redis->client('SETNAME', $this->getCalledClassStub());
+        //$this->redis->client('SETNAME', $this->getCalledClassStub());
         $this->redStorClient = new RedStorClient([
             'host' => 'redstor',
         ]);
