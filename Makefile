@@ -1,8 +1,11 @@
 .PHONY: tests redstor-restart redis-ping clean redis-benchmark redis-benchmark-real redstor-cli
 
+SHELL:=/bin/bash
+
 clean:
-	if [-a vendor/bin/php-cs-fixer ] ; then \
-		-@vendor/bin/php-cs-fixer fix; \
+	if test -f vendor/bin/php-cs-fixer ; then \
+		vendor/bin/php-cs-fixer fix; \
+		echo "Cleaned!"; \
 	fi;
 
 tests: clean
