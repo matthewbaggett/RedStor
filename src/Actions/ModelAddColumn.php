@@ -16,24 +16,32 @@ class ModelAddColumn extends BaseAction implements ActionInterface
     {
         $command = array_shift($parsedData);
         $modelName = array_shift($parsedData);
-        $columnPairs = array_chunk($parsedData, 2);
-        foreach ($columnPairs as $columnPair) {
-            list($columnName, $columnType) = $columnPair;
-            $weight = $this->redis->zcount(sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $modelName), '-inf', '+inf') + 1;
-            //\Kint::dump(
-            //    sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $modelName),
-            //    $weight,
-            //    $columnName
-            //);
-            $this->redis->zadd(
-                sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $modelName),
-                $weight,
-                $columnName
-            );
-            $this->redis->mset([
-                sprintf(RedStor::KEY_MODEL_COLUMN_DEFINITION, $modelName, $columnName).':name' => $columnName,
-                sprintf(RedStor::KEY_MODEL_COLUMN_DEFINITION, $modelName, $columnName).':type' => $columnType,
-            ]);
+        @list($columnName, $columnType, $columnOptions) = $parsedData;
+        $weight = $this->redis->zcount(sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $modelName), '-inf', '+inf') + 1;
+        //\Kint::dump(
+        //    sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $modelName),
+        //    $weight,
+        //    $columnName,
+        //    $columnType,
+        //    $columnOptions
+        //);
+        $this->redis->zadd(
+            sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $modelName),
+            $weight,
+            $columnName
+        );
+        $this->redis->mset([
+            sprintf(RedStor::KEY_MODEL_COLUMN_NAME, $modelName, $columnName) => $columnName,
+            sprintf(RedStor::KEY_MODEL_COLUMN_TYPE, $modelName, $columnName) => $columnType,
+        ]);
+        if ($columnOptions) {
+            $options = json_decode($columnOptions);
+            if (is_array($options) && count($options) > 0) {
+                $this->redis->hmset(
+                    sprintf(RedStor::KEY_MODEL_COLUMN_OPTIONS, $modelName, $columnName),
+                    $options
+                );
+            }
         }
         $this->encoder->sendOK($connection);
     }

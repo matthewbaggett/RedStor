@@ -32,11 +32,18 @@ class Model implements EntityInterface
         }
         $this->setName($modelName);
 
+        $count = $redis->zcount(
+            sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $this->getName()),
+            '-inf',
+            '+inf'
+        );
         $columns = $redis->zrange(
             sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $this->getName()),
             0,
             -1
         );
+        //\Kint::dump($count, $columns);
+        //exit;
         foreach ($columns as $column) {
             $this->addColumn((new Column())->loadByName($redis, $modelName, $column));
         }

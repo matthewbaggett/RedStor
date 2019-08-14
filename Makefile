@@ -14,7 +14,8 @@ tests: clean
 		vendor/bin/phpunit \
 			--stop-on-error \
 			--stop-on-failure \
-			--no-coverage
+			--no-coverage \
+			--debug
 
 redis-ping:
 	docker-compose run --rm redis \

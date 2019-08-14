@@ -46,12 +46,12 @@ class Column implements EntityInterface
 
     public function create(PredisClient $redis, Model $model = null)
     {
-        \Kint::dump(
-            $model->getName_clean(),
-            $this->getName_clean(),
-            $this->getType()->getName(),
-            json_encode($this->getOptions())
-        );
+        //\Kint::dump(
+        //    $model->getName_clean(),
+        //    $this->getName_clean(),
+        //    $this->getType()->getName(),
+        //    json_encode($this->getOptions())
+        //);
         $redis->modelAddColumn($model->getName_clean(), $this->getName_clean(), $this->getType()->getName(), json_encode($this->getOptions()));
 
         return true;
@@ -67,14 +67,29 @@ class Column implements EntityInterface
 
     public function loadByName(PredisClient $redis, string $modelName, string $columnName): Column
     {
-        $this->setName($redis->get(sprintf(RedStor::KEY_MODEL_COLUMN_NAME, $modelName, $columnName)));
-        $typeName = $redis->get(sprintf(RedStor::KEY_MODEL_COLUMN_TYPE, $modelName, $columnName));
+        $keyColumnName = sprintf(RedStor::KEY_MODEL_COLUMN_NAME, $modelName, $columnName);
+        $keyColumnType = sprintf(RedStor::KEY_MODEL_COLUMN_TYPE, $modelName, $columnName);
+        $keyColumnOptions = sprintf(RedStor::KEY_MODEL_COLUMN_OPTIONS, $modelName, $columnName);
+        //\Kint::dump(
+        //    $modelName,
+        //    $columnName,
+        //    $keyColumnName,
+        //    $keyColumnType,
+        //    $keyColumnOptions
+        //);
+        $this->setName($redis->get($keyColumnName));
+        $typeName = $redis->get($keyColumnType);
+        //\Kint::dump(
+        //    $redis->get($keyColumnName),
+        //    $redis->get($keyColumnType)
+        //);
         $typeClass = "RedStor\\SDK\\Types\\{$typeName}Type";
         if (!class_exists($typeClass)) {
-            throw new ColumnTypeDoesntExistException(sprintf("Column type %s doesn't exist.", $typeName));
+            throw new ColumnTypeDoesntExistException(sprintf("Column type \"%s\" doesn't exist.", $typeName));
         }
         $this->setType(new $typeClass());
-        $this->setOptions($redis->hgetall(sprintf(RedStor::KEY_MODEL_COLUMN_OPTIONS, $modelName, $columnName)));
+        //\Kint::dump($keyColumnOptions, $redis->type($keyColumnOptions));
+        $this->setOptions($redis->hgetall($keyColumnOptions));
 
         return $this;
     }
