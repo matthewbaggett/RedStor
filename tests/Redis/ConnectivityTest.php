@@ -2,6 +2,7 @@
 
 namespace RedStor\Tests\Redis;
 
+use Predis\Response\Status;
 use RedStor\Tests\RedStorTest;
 
 /**
@@ -12,6 +13,9 @@ class ConnectivityTest extends RedStorTest
 {
     public function testConnect()
     {
-        $this->assertEquals(['PONG'], $this->redis->ping());
+        /** @var Status $pong */
+        $pong = $this->redis->ping();
+        $this->assertInstanceOf(Status::class, $pong);
+        $this->assertEquals('OK', $pong->getPayload());
     }
 }
