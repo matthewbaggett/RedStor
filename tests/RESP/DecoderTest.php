@@ -3,13 +3,13 @@
 namespace RedStor\Tests\RESP;
 
 use RedStor\Client\Decoder;
-use RedStor\Tests\RedStorTest;
+use ⌬\Tests\TestCase;
 
 /**
  * @internal
- * @coversNothing
+ * @covers \RedStor\Client\Decoder
  */
-class DecoderTest extends RedStorTest
+class DecoderTest extends TestCase
 {
     /** @var Decoder */
     protected $decoder;
