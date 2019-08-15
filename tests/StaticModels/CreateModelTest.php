@@ -22,11 +22,6 @@ class CreateModelTest extends RedStorTest
         $this->assertEquals(['OK'], $this->redis->modelAddColumn('rawTestModel', 'colString', 'string'));
         $this->assertEquals(['OK'], $this->redis->modelAddColumn('rawTestModel', 'colDecimal', 'decimal'));
         $this->assertEquals(['OK'], $this->redis->modelAddColumn('rawTestModel', 'colInt', 'int'));
-
-        //$this->assertEquals(['OK'], $this->redis->modelAddColumns('rawTestModel', [
-        //    'min' => 'int',
-        //    'max' => 'int',
-        //]));
     }
 
     public function testCreate()
@@ -45,7 +40,7 @@ class CreateModelTest extends RedStorTest
 
     public function testCreateABlog()
     {
-        // Wipe the database.
+        // Explictly wipe the database.
         $this->redis->flushall();
 
         $users = Entities\Model::Factory('users')

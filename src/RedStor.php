@@ -15,6 +15,9 @@ class RedStor extends ⌬
     public const KEY_MODEL_ITEM = '{RedStor:Data:%s}:Items:%s';
     public const KEY_MODEL_ITEM_FIELD = '{RedStor:Data:%s}:Items:%s:%s';
     public const KEY_MODEL_INDEX = '{RedStor:Meta:Indexes:%s}:Index:%s';
+    public const KEY_FLUSH_QUEUE = '{RedStor:Queues}:FlushToDB';
+
+    public const CHANNEL_QUEUE_FLUSHTODB = 'RedStor:Queues:FlushToDB';
 
     public function __construct($options = [])
     {

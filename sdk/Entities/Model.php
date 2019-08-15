@@ -169,10 +169,13 @@ class Model implements EntityInterface
         $id = $this->__getId() ?? $this->__getNextId($redis);
         $this->__setId($id);
         $dict = [];
-        $key = sprintf(
+        $storageKey = sprintf(
             RedStor::KEY_MODEL_ITEM,
             $this->getName_clean(),
             $id
+        );
+        $flushToDbQueueKey = sprintf(
+            RedStor::KEY_FLUSH_QUEUE
         );
         foreach ($this->getColumns() as $column) {
             $value = $this->data[$column->getName_clean()];
@@ -206,7 +209,16 @@ class Model implements EntityInterface
             $dict[$column->getName_clean()] = $value;
         }
 
-        $redis->hmset($key, $dict);
+        #\Kint::dump($storageKey, $dict);
+
+        $redis->hmset($storageKey, $dict);
+
+        $redis->sadd($flushToDbQueueKey, [$storageKey]);
+
+        $countNumberRecieved = $redis->publish(RedStor::CHANNEL_QUEUE_FLUSHTODB, $redis->scard($flushToDbQueueKey));
+        if($countNumberRecieved == 0){
+            // If a tree falls in a forest, and nobody hears it?
+        }
 
         return $this;
     }
