@@ -35,7 +35,7 @@ class ModelAddColumn extends BaseAction implements ActionInterface
             sprintf(RedStor::KEY_MODEL_COLUMN_TYPE, $modelName, $columnName) => $columnType,
         ]);
 
-        if (isset($columnOptions) && $columnOptions && $columnOptions != '[]') {
+        if (isset($columnOptions) && $columnOptions && '[]' != $columnOptions) {
             $options = json_decode($columnOptions, true);
             \Kint::dump($options);
             if (is_array($options) && count($options) > 0) {

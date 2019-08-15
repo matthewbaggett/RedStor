@@ -12,6 +12,7 @@ use RedStor\SDK\Entities\Model;
  * @method mixed restart()
  * @method mixed modelCreate(string $modelName)
  * @method mixed modelAddColumn(string $modelName, string $columnName, string $columnType, string $optionsJsonEncoded)
+ * @method int   zadd($key, int $score, $member)
  */
 class RedStorClient extends Client
 {
@@ -32,7 +33,7 @@ class RedStorClient extends Client
         parent::__construct($parameters, $options);
     }
 
-    public function getPredis() : Client
+    public function getPredis(): Client
     {
         return new Client($this->cachedParameters, $this->cachedOptions);
     }
@@ -51,7 +52,7 @@ class RedStorClient extends Client
     {
         $hKeys = $this->hkeys($key);
         $hVals = $this->hmget($key, $hKeys);
-        $hGetAll = array_combine($hKeys, $hVals);
-        return $hGetAll;
+
+        return array_combine($hKeys, $hVals);
     }
 }

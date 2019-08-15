@@ -87,7 +87,7 @@ class CreateModelTest extends RedStorTest
         $created = $this->faker()->dateTime;
         $active = $this->faker()->boolean;
 
-        \Kint::dump($userName, $email, $password, $created, $active);
+        //\Kint::dump($userName, $email, $password, $created, $active);
 
         /** @var Entities\Model $newUser */
         $newUser = $users->newItem()
@@ -95,7 +95,8 @@ class CreateModelTest extends RedStorTest
             ->setEmail($email)
             ->setPassword(password_hash($password, PASSWORD_DEFAULT))
             ->setCreated($created)
-            ->setActive($active);
+            ->setActive($active)
+        ;
 
         $this->assertInstanceOf(Entities\Model::class, $newUser);
         $this->assertEquals($userName, $newUser->getUsername());
@@ -106,23 +107,34 @@ class CreateModelTest extends RedStorTest
 
         $newUser->save($this->redis);
 
-        for($i = 0; $i <= $this->faker()->numberBetween(3,10); $i++) {
+        for ($i = 0; $i <= $this->faker()->numberBetween(3, 10); ++$i) {
             $blogPostObject = ($blogPosts->newItem())
                 ->setTitle($this->faker()->words(5, true))
                 ->setPost($this->faker()->words(50, true))
                 ->setCreated($this->faker()->dateTime)
                 ->setPublished($this->faker()->dateTime)
                 ->setUserId($newUser->getUserId())
-                ->save($this->redis);
+                ->save($this->redis)
+            ;
 
-            for($j = 0; $j <= $this->faker()->numberBetween(2,5); $j++){
+            for ($j = 0; $j <= $this->faker()->numberBetween(2, 5); ++$j) {
                 ($comments->newItem())
                     ->setPostId($blogPostObject->getPostId())
                     ->setUserId($newUser->getUserId())
                     ->setComment($this->faker()->words(50, true))
                     ->setCreated($this->faker()->dateTime)
-                    ->save($this->redis);
+                    ->save($this->redis)
+            ;
             }
         }
+    }
+
+    public function testGetBlogPosts()
+    {
+        $postsModelService = $this->redis->rsDescribeModel('posts');
+        $posts = $postsModelService->select($this->redis);
+        $this->assertContainsOnlyInstancesOf(Entities\Model::class, $posts);
+
+        $this->assertEquals(array_reverse($posts), $postsModelService->select($this->redis, null, Entities\Model::ORDER_DESC));
     }
 }

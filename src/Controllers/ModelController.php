@@ -35,7 +35,7 @@ class ModelController extends GatewayController
             ], $request, $response);
         }
 
-        if(is_array($columns)) {
+        if (is_array($columns)) {
             foreach ($columns as $column) {
                 $columnAddResult = $this->redStorClient->modelAddColumn($modelName, $column['name'], $column['type']['name']);
                 if (!(is_array($columnAddResult) && 'OK' == $columnAddResult[0])) {

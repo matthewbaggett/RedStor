@@ -89,7 +89,7 @@ class Column implements EntityInterface
         }
         $this->setType(new $typeClass());
 
-        if($redis->exists($keyColumnOptions)) {
+        if ($redis->exists($keyColumnOptions)) {
             $this->setOptions($redis->hgetall($keyColumnOptions));
         }
 
