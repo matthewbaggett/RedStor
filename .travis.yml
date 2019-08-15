@@ -12,8 +12,9 @@ before_install:
 
 before_script:
   - docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD $DOCKER_REGISTRY
-  - docker-compose up -d
   - composer install --dev
+  - docker-compose build
+  - docker-compose up -d
 
 script:
   - travis_retry make tests
