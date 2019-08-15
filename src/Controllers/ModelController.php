@@ -21,7 +21,12 @@ class ModelController extends GatewayController
      */
     public function create(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $modelName = $request->getParsedBody()['name'];
+        // Take the name from the body if not, the url.
+        $modelName = $request->getParsedBody()['name'] ?? $request->getAttribute('modelName');
+
+        // Get the columns from the body.
+        $columns = $request->getParsedBody()['columns'];
+
         $result = $this->redStorClient->modelCreate($modelName);
         if (!(is_array($result) && 'OK' == $result[0])) {
             return $this->jsonResponse([
@@ -30,13 +35,15 @@ class ModelController extends GatewayController
             ], $request, $response);
         }
 
-        foreach ($request->getParsedBody()['columns'] as $column) {
-            $columnAddResult = $this->redStorClient->modelAddColumn($modelName, $column['name'], $column['type']['name']);
-            if (!(is_array($columnAddResult) && 'OK' == $columnAddResult[0])) {
-                return $this->jsonResponse([
-                    'Status' => 'Fail',
-                    'Reason' => "Could not create column \"{$column['name']}\".",
-                ], $request, $response);
+        if(is_array($columns)) {
+            foreach ($columns as $column) {
+                $columnAddResult = $this->redStorClient->modelAddColumn($modelName, $column['name'], $column['type']['name']);
+                if (!(is_array($columnAddResult) && 'OK' == $columnAddResult[0])) {
+                    return $this->jsonResponse([
+                        'Status' => 'Fail',
+                        'Reason' => "Could not create column \"{$column['name']}\".",
+                    ], $request, $response);
+                }
             }
         }
 

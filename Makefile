@@ -58,3 +58,9 @@ push-gateway-prod:
 	docker push redstor/gateway
 
 push-prod: push-redstor-prod push-gateway-prod
+
+deploy-demo-site:
+	# I am a fish.
+
+purge-demo-site:
+	# I am another fish.

@@ -12,18 +12,27 @@ before_install:
 
 before_script:
   - docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD $DOCKER_REGISTRY
+  - docker-compose up -d
+  - composer install --dev
 
 script:
-  - travis_retry make build-$BUILD-prod
+  - travis_retry make tests
+
+after_failure:
+  - docker-compose down -v
 
 after_success:
+  - docker-compose down -v
+  - travis_retry make build-$BUILD-prod
+
+before_deploy:
   - travis_retry make push-$BUILD-prod
 
-#deploy:
-#  provider: script
-#  script: travis_retry docker push $BUILD
-#  on:
-#    branch: master
+deploy:
+  provider: script
+  script: travis_retry make deploy-demo-site
+  on:
+    branch: master
 
 notifications:
   email:

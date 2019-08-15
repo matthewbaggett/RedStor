@@ -15,8 +15,13 @@ use RedStor\SDK\Entities\Model;
  */
 class RedStorClient extends Client
 {
+    private $cachedParameters;
+    private $cachedOptions;
+
     public function __construct($parameters = null, $options = null)
     {
+        $this->cachedParameters = $parameters;
+        $this->cachedOptions = $options;
         Factory::define(RedStorProfile::class, RedStorProfile::class);
         if (!$options) {
             $options = [];
@@ -27,6 +32,11 @@ class RedStorClient extends Client
         parent::__construct($parameters, $options);
     }
 
+    public function getPredis() : Client
+    {
+        return new Client($this->cachedParameters, $this->cachedOptions);
+    }
+
     public function rsCreateModel(Model $model)
     {
         return $model->create($this);
@@ -35,5 +45,13 @@ class RedStorClient extends Client
     public function rsDescribeModel(string $name): Model
     {
         return (new Model())->loadByName($this, $name);
+    }
+
+    public function hgetall($key)
+    {
+        $hKeys = $this->hkeys($key);
+        $hVals = $this->hmget($key, $hKeys);
+        $hGetAll = array_combine($hKeys, $hVals);
+        return $hGetAll;
     }
 }

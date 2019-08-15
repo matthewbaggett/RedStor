@@ -66,7 +66,7 @@ class ModelTest extends GatewayTest
 
         $json = json_decode($response->getBody()->getContents(), true);
 
-        \Kint::dump($json);
+        #\Kint::dump($json);
 
         $this->assertArrayHasKey('Status', $json);
 
