@@ -15,4 +15,12 @@ class EmailType extends StringType
     {
         return 320;
     }
+
+    public function validate($input): bool
+    {
+        return parent::validate($input)
+            && stripos($input, "@") !== false
+            && filter_var(trim($input), FILTER_VALIDATE_EMAIL) === $input
+        ;
+    }
 }

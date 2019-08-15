@@ -21,4 +21,9 @@ class DateType implements TypeInterface
     {
         return 'pdate';
     }
+
+    public function validate($input): bool
+    {
+        return $input instanceof \DateTime;
+    }
 }

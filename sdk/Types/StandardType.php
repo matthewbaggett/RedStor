@@ -28,4 +28,9 @@ trait StandardType
 
         return trim($cleanedName);
     }
+
+    protected function getMaxLength() : int
+    {
+        return $this->getSqlLength() > 0 ? $this->getSqlLength() : PHP_INT_MAX ;
+    }
 }

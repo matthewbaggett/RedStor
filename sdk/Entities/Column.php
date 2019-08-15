@@ -88,6 +88,7 @@ class Column implements EntityInterface
             throw new ColumnTypeDoesntExistException(sprintf("Column type \"%s\" doesn't exist.", $typeName));
         }
         $this->setType(new $typeClass());
+
         if($redis->exists($keyColumnOptions)) {
             $this->setOptions($redis->hgetall($keyColumnOptions));
         }

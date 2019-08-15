@@ -21,4 +21,9 @@ class DecimalType implements TypeInterface
     {
         return 'pdouble';
     }
+
+    public function validate($input): bool
+    {
+        return is_numeric($input);
+    }
 }

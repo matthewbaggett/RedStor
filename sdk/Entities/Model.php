@@ -5,6 +5,10 @@ namespace RedStor\SDK\Entities;
 use Predis\Client as PredisClient;
 use RedStor\RedStor;
 use RedStor\SDK\Exceptions;
+use RedStor\SDK\Types\BoolType;
+use RedStor\SDK\Types\DateType;
+use RedStor\SDK\Types\KeyType;
+use ⌬\UUID\UUID;
 
 class Model implements EntityInterface
 {
@@ -12,12 +16,167 @@ class Model implements EntityInterface
     protected $name;
     /** @var Column[] */
     protected $columns;
+    /** @var array */
+    protected $data;
 
     public function __construct(string $name = null)
     {
         if ($name) {
             $this->setName($name);
         }
+    }
+
+    public function newItem() : Model
+    {
+        return (new self())
+            ->setName($this->getName())
+            ->setColumns($this->getColumns());
+    }
+
+    public function __call($methodName, $arguments)
+    {
+        $field = substr($methodName, 3);
+        switch(substr($methodName,0,3)){
+            case 'set':
+                return $this->__set($field, $arguments);
+            case 'get':
+                return $this->__get($field);
+        }
+        throw new Exceptions\PropertyDoesntExistException(sprintf(
+            "Model %s doesn't have a method called %s.",
+            get_called_class(),
+            $methodName
+        ));
+    }
+
+    static protected function sanitise($string) : string {
+        // @todo ugh
+        return lcfirst($string);
+    }
+
+    public function __set($columnName, $arguments) : self
+    {
+        $value = $arguments[0];
+
+        \Kint::dump($columnName, $this->columns);
+
+        if(!isset($this->columns[self::sanitise($columnName)])){
+            throw new Exceptions\PropertyDoesntExistException(sprintf(
+                "Column \"%s\" (%s) doesn't seem to have a definition set. Something bad has happened.",
+                $columnName, self::sanitise($columnName)
+            ));
+        }
+
+        $type = $this->columns[self::sanitise($columnName)]->getType();
+
+        if(!$type->validate($value)){
+            throw new Exceptions\ColumnDataDoesntMatchColumnType(sprintf(
+                "Column \"%s\" type \"%s\" doesn't accept \"%s\" as a value.",
+                $columnName,
+                get_class($this->columns[self::sanitise($columnName)]),
+                $value
+            ));
+        }
+
+        $this->data[self::sanitise($columnName)] = $value;
+        return $this;
+    }
+
+    public function __get($name)
+    {
+        return $this->data[self::sanitise($name)];
+    }
+
+    public function __getNextId(PredisClient $redis) : int {
+        $key = [];
+
+        foreach($this->getColumns() as $column) {
+            if ($column->getType() instanceof KeyType) {
+                if (!isset($this->data[$column->getName_clean()])) {
+                    $indexKey = sprintf(
+                        RedStor::KEY_MODEL_INDEX,
+                        $this->getName_clean(),
+                        $column->getName_clean()
+                    );
+                    $count = $redis->zcount($indexKey, "-inf", "+inf");
+                    $key[] = $count + 1;
+                }
+            }
+        }
+        return count($key) ? implode(":", $key) : null;
+    }
+
+    public function __getId() {
+        $key = [];
+        foreach($this->getColumns() as $column){
+            if($column->getType() instanceof KeyType){
+                \Kint::dump(
+                    $column->getName_clean(),
+                    $this->data
+                );
+                if(isset($this->data[$column->getName_clean()])) {
+                    $key[] = $this->data[$column->getName_clean()];
+                }
+            }
+        }
+        return count($key) ? implode(":", $key) : null;
+    }
+
+    public function __setId($newId) : self {
+        foreach($this->getColumns() as $column){
+            if($column->getType() instanceof KeyType){
+                if(!isset($this->data[$column->getName_clean()])) {
+                    $this->data[$column->getName_clean()] = $newId;
+                }
+            }
+        }
+        return $this;
+    }
+
+    public function save(PredisClient $redis) : self
+    {
+        $id = $this->__getId() ?? $this->__getNextId($redis);
+        $this->__setId($id);
+        $dict = [];
+        foreach($this->getColumns() as $column) {
+            $key = sprintf(
+                RedStor::KEY_MODEL_ITEM_FIELD,
+                $this->getName_clean(),
+                $id,
+                $column->getName_clean()
+            );
+
+            $value = $this->data[$column->getName_clean()];
+
+            switch(get_class($column->getType())){
+                case DateType::class:
+                    /** @var \DateTime $value */
+                    $value = $value->format("Y-m-d H:i:s");
+                    break;
+                case BoolType::class:
+                    $value = $value ? "True" : "False";
+                    break;
+            }
+
+            if($column->getType()->isPrimaryKey()){
+                $indexKey = sprintf(
+                    RedStor::KEY_MODEL_INDEX,
+                    $this->getName_clean(),
+                    $column->getName_clean()
+                );
+                $itemKey = sprintf(
+                    RedStor::KEY_MODEL_ITEM,
+                    $this->getName_clean(),
+                    $this->__getId()
+                );
+                $redis->zadd($indexKey, $this->__getId(), $itemKey);
+            }
+
+            $dict[$key] = $value;
+        }
+
+        $redis->mset($dict);
+        return $this;
     }
 
     public static function Factory(string $name = null): Model
@@ -30,6 +189,7 @@ class Model implements EntityInterface
         if (!$redis->sismember(RedStor::KEY_MODEL_LIST_SET, $modelName)) {
             throw new Exceptions\ModelDoesntExistException(sprintf("Model %s doesn't exist!", $modelName));
         }
+
         $this->setName($modelName);
 
         #$count = $redis->zcount(
@@ -37,15 +197,21 @@ class Model implements EntityInterface
         #    '-inf',
         #    '+inf'
         #);
+
         $columns = $redis->zrange(
             sprintf(RedStor::KEY_MODEL_COLUMN_LIST_SET, $this->getName()),
             0,
             -1
         );
+
         //\Kint::dump($count, $columns);
         //exit;
+
         foreach ($columns as $column) {
-            $this->addColumn((new Column())->loadByName($redis, $modelName, $column));
+            $this->addColumn(
+                (new Column())
+                    ->loadByName($redis, $modelName, $column)
+            );
         }
 
         return $this;
@@ -61,7 +227,7 @@ class Model implements EntityInterface
 
     public function addColumn(Column $column)
     {
-        $this->columns[] = $column;
+        $this->columns[$column->getName_clean()] = $column;
 
         return $this;
     }

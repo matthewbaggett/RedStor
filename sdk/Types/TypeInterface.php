@@ -17,4 +17,6 @@ interface TypeInterface extends \JsonSerializable
     public function getSqlLength(): int;
 
     public function getSolrType(): string;
+
+    public function validate($input): bool;
 }

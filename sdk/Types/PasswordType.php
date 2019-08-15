@@ -2,15 +2,10 @@
 
 namespace RedStor\SDK\Types;
 
-class PasswordType implements TypeInterface
+class PasswordType extends StringType implements TypeInterface
 {
     use SerializableType;
     use StandardType;
-
-    public function getSqlType(): string
-    {
-        return 'VARCHAR';
-    }
 
     public function getSqlLength(): int
     {

@@ -21,4 +21,10 @@ class IntType implements TypeInterface
     {
         return 'pint';
     }
+
+    public function validate($input): bool
+    {
+        return is_int($input)
+            && strlen($input) <= $this->getMaxLength();
+    }
 }

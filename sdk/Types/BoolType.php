@@ -18,4 +18,9 @@ class BoolType extends IntType implements TypeInterface
     {
         return 'boolean';
     }
+
+    public function validate($input): bool
+    {
+        return is_bool($input);
+    }
 }

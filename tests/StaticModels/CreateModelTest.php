@@ -5,6 +5,7 @@ namespace RedStor\Tests\Redis;
 use RedStor\SDK\Entities;
 use RedStor\SDK\Types;
 use RedStor\Tests\RedStorTest;
+use ⌬\Tests\Traits\FakeDataTrait;
 
 /**
  * @internal
@@ -12,10 +13,7 @@ use RedStor\Tests\RedStorTest;
  */
 class CreateModelTest extends RedStorTest
 {
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-    }
+    use FakeDataTrait;
 
     public function testCreateRaw()
     {
@@ -82,5 +80,49 @@ class CreateModelTest extends RedStorTest
         $this->assertEquals($users, $this->redis->rsDescribeModel('users'));
         $this->assertEquals($blogPosts, $this->redis->rsDescribeModel('posts'));
         $this->assertEquals($comments, $this->redis->rsDescribeModel('comments'));
+
+        $userName = $this->faker()->userName;
+        $email = $this->faker()->safeEmail;
+        $password = $this->faker()->password;
+        $created = $this->faker()->dateTime;
+        $active = $this->faker()->boolean;
+
+        \Kint::dump($userName, $email, $password, $created, $active);
+
+        /** @var Entities\Model $newUser */
+        $newUser = $users->newItem()
+            ->setUsername($userName)
+            ->setEmail($email)
+            ->setPassword(password_hash($password, PASSWORD_DEFAULT))
+            ->setCreated($created)
+            ->setActive($active);
+
+        $this->assertInstanceOf(Entities\Model::class, $newUser);
+        $this->assertEquals($userName, $newUser->getUsername());
+        $this->assertEquals($email, $newUser->getEmail());
+        $this->assertTrue(password_verify($password, $newUser->getPassword()));
+        $this->assertEquals($created, $newUser->getCreated());
+        $this->assertEquals($active, $newUser->getActive());
+
+        $newUser->save($this->redis);
+
+        for($i = 0; $i <= $this->faker()->numberBetween(3,10); $i++) {
+            $blogPostObject = ($blogPosts->newItem())
+                ->setTitle($this->faker()->words(5, true))
+                ->setPost($this->faker()->words(50, true))
+                ->setCreated($this->faker()->dateTime)
+                ->setPublished($this->faker()->dateTime)
+                ->setUserId($newUser->getUserId())
+                ->save($this->redis);
+
+            for($j = 0; $j <= $this->faker()->numberBetween(2,5); $j++){
+                ($comments->newItem())
+                    ->setPostId($blogPostObject->getPostId())
+                    ->setUserId($newUser->getUserId())
+                    ->setComment($this->faker()->words(50, true))
+                    ->setCreated($this->faker()->dateTime)
+                    ->save($this->redis);
+            }
+        }
     }
 }

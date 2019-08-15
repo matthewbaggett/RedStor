@@ -21,4 +21,9 @@ class StringType implements TypeInterface
     {
         return 'text_general';
     }
+
+    public function validate($input): bool
+    {
+        return is_string($input) && strlen($input) <= $this->getMaxLength();
+    }
 }
