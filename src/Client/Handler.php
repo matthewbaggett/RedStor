@@ -29,6 +29,8 @@ class Handler
     protected $redis;
     /** @var Actions\ActionInterface[] */
     protected $handlerActions = [];
+    /** @var State */
+    protected $state;
 
     public function __construct(
         LoopInterface $loop,
@@ -56,6 +58,8 @@ class Handler
             new Actions\PingAction($this->loop, $this->encoder, $this->decoder, $this->redis),
             new Actions\RestartAction($this->loop, $this->encoder, $this->decoder, $this->redis),
         ];
+
+        $this->state = new State();
     }
 
     public function __attachToConnection()
