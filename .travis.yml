@@ -32,7 +32,7 @@ before_deploy:
 
 deploy:
   provider: script
-  script: travis_retry make deploy-demo-site
+  script: make deploy-demo-site
   on:
     branch: master
 
