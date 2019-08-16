@@ -6,9 +6,12 @@ use Predis\Client as PredisClient;
 use React\EventLoop\LoopInterface;
 use RedStor\Client\Decoder;
 use RedStor\Client\Encoder;
+use RedStor\Client\Handler;
 
 class BaseAction
 {
+    /** @var Handler */
+    protected $handler;
     /** @var LoopInterface */
     protected $loop;
     /** @var Encoder */
@@ -19,14 +22,12 @@ class BaseAction
     protected $redis;
 
     public function __construct(
-        LoopInterface $loop,
-        Encoder $encoder,
-        Decoder $decoder,
-        PredisClient $redis
+        Handler $handler
     ) {
-        $this->loop = $loop;
-        $this->encoder = $encoder;
-        $this->decoder = $decoder;
-        $this->redis = $redis;
+        $this->handler = $handler;
+        $this->loop = $handler->getLoop();
+        $this->encoder = $handler->getEncoder();
+        $this->decoder = $handler->getDecoder();
+        $this->redis = $handler->getRedis();
     }
 }
