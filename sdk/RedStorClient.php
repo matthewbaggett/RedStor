@@ -4,6 +4,7 @@ namespace RedStor\SDK;
 
 use Predis\Client;
 use Predis\Profile\Factory;
+use Predis\Response\Status;
 use RedStor\SDK\Entities\Model;
 
 /**
@@ -34,14 +35,23 @@ class RedStorClient extends Client
         parent::__construct($parameters, $options);
     }
 
-    public function login($app, $username, $password)
+    public function login($app, $username, $password): bool
     {
         $authRequest = sprintf('%s:%s:%s', $app, $username, $password);
-        \Kint::dump($authRequest);
+        /** @var Status $authResponse */
         $authResponse = $this->auth($authRequest);
 
-        \Kint::dump($authResponse);
-        exit;
+        return '+AUTH' == substr($authResponse->getPayload(), 0, 5);
+    }
+
+    public function ping($message = null)
+    {
+        @list($pong, $replyMessage) = parent::ping($message);
+        if (!$replyMessage) {
+            return true;
+        }
+
+        return $replyMessage;
     }
 
     public function getPredis(): Client

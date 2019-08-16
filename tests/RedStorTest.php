@@ -3,6 +3,7 @@
 namespace RedStor\Tests;
 
 use Predis\Connection\ConnectionException;
+use RedStor\RedStor;
 use RedStor\SDK\RedStorClient;
 use ⌬\Tests\TestCase;
 
@@ -45,10 +46,11 @@ abstract class RedStorTest extends TestCase
                 $redis->ping();
                 $connected = true;
             } catch (ConnectionException $conex) {
+                usleep(1000);
             }
         }
-        $redis->hset('RedStor:Auth:Demo', 'demo@redstor', '$2y$10$VHoTQjWEBDQgc6n01h.VFOv9DiigXpav8rMCVWV9ARsHTqQ3zYro2');
-        $redis->set('RedStor:RateLimit:Demo:RequestsPerHour', 10000);
-        $redis->set('RedStor:RateLimit:Demo:RequestsPerHourAvailable', 10000);
+        $redis->hset(sprintf(RedStor::KEY_AUTH_APP, 'Demo'), 'demo@redstor', '$2y$10$VHoTQjWEBDQgc6n01h.VFOv9DiigXpav8rMCVWV9ARsHTqQ3zYro2');
+        $redis->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR, 'Demo'), 10000);
+        $redis->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR_AVAILABLE, 'Demo'), 10000);
     }
 }

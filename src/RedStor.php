@@ -16,6 +16,9 @@ class RedStor extends ⌬
     public const KEY_MODEL_ITEM_FIELD = '{RedStor:Data:%s}:Items:%s:%s';
     public const KEY_MODEL_INDEX = '{RedStor:Meta:Indexes:%s}:Index:%s';
     public const KEY_FLUSH_QUEUE = '{RedStor:Queues}:FlushToDB';
+    public const KEY_AUTH_APP = 'RedStor:Auth:%s';
+    public const KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR = 'RedStor:RateLimit:%s:RequestsPerHour';
+    public const KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR_AVAILABLE = 'RedStor:RateLimit:%s:RequestsPerHourAvailable';
 
     public const CHANNEL_QUEUE_FLUSHTODB = 'RedStor:Queues:FlushToDB';
 

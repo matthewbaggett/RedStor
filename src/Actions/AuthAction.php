@@ -3,6 +3,7 @@
 namespace RedStor\Actions;
 
 use React\Socket\ConnectionInterface;
+use RedStor\RedStor;
 
 class AuthAction extends BaseAction implements ActionInterface
 {
@@ -16,9 +17,29 @@ class AuthAction extends BaseAction implements ActionInterface
         list($method, $credentials) = $parsedData;
         list($appname, $username, $password) = explode(':', $credentials, 3);
         \Kint::dump($appname, $username, $password);
-        $this->encoder->sendInline(
-            $connection,
-            '+AUTH herple derple'
+        $authMatching = $this->redis->hget(
+            sprintf(RedStor::KEY_AUTH_APP, $appname),
+            $username
         );
+        \Kint::dump($authMatching);
+        if (password_verify($password, $authMatching)) {
+            if (password_needs_rehash($authMatching, PASSWORD_DEFAULT)) {
+                $this->redis->hset(
+                    sprintf(RedStor::KEY_AUTH_APP, $appname),
+                    $username,
+                    password_hash($password, PASSWORD_DEFAULT)
+                );
+            }
+
+            $this->encoder->sendInline(
+                $connection,
+                "+AUTH Hello {$username}!"
+            );
+        } else {
+            $this->encoder->sendInline(
+                $connection,
+                '-AUTH Credentials invalid.'
+            );
+        }
     }
 }

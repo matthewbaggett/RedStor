@@ -2,8 +2,8 @@
 
 namespace RedStor\Tests\Redis;
 
-use Predis\Response\Status;
 use RedStor\Tests\RedStorTest;
+use ⌬\Tests\Traits\FakeDataTrait;
 
 /**
  * @internal
@@ -11,11 +11,16 @@ use RedStor\Tests\RedStorTest;
  */
 class ConnectivityTest extends RedStorTest
 {
+    use FakeDataTrait;
+
     public function testConnect()
     {
-        /** @var Status $pong */
-        $pong = $this->redis->ping();
-        $this->assertInstanceOf(Status::class, $pong);
-        $this->assertEquals('OK', $pong->getPayload());
+        $this->assertTrue($this->redis->ping());
+    }
+
+    public function testConnectWithMessage()
+    {
+        $words = $this->faker()->words(3, true);
+        $this->assertEquals($words, $this->redis->ping($words));
     }
 }

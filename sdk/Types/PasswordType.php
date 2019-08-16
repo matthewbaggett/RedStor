@@ -9,7 +9,9 @@ class PasswordType extends StringType implements TypeInterface
 
     public function getSqlLength(): int
     {
-        return strlen(password_hash('length', PASSWORD_DEFAULT));
+        // So while password_hash() using PASSWORD_DEFAULT returns
+        // 60 characters, it may not in the future, when PASSWORD_DEFAULT gets changed!
+        return 255;
     }
 
     public function getSolrType(): string
