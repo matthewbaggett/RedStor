@@ -13,6 +13,7 @@ use RedStor\SDK\Entities\Model;
  * @method mixed modelCreate(string $modelName)
  * @method mixed modelAddColumn(string $modelName, string $columnName, string $columnType, string $optionsJsonEncoded)
  * @method int   zadd($key, int $score, $member)
+ * @method bool  auth($password)
  */
 class RedStorClient extends Client
 {
@@ -31,6 +32,16 @@ class RedStorClient extends Client
             'profile' => RedStorProfile::class,
         ]);
         parent::__construct($parameters, $options);
+    }
+
+    public function login($app, $username, $password)
+    {
+        $authRequest = sprintf('%s:%s:%s', $app, $username, $password);
+        \Kint::dump($authRequest);
+        $authResponse = $this->auth($authRequest);
+
+        \Kint::dump($authResponse);
+        exit;
     }
 
     public function getPredis(): Client

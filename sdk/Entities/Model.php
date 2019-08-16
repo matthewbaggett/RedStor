@@ -209,14 +209,14 @@ class Model implements EntityInterface
             $dict[$column->getName_clean()] = $value;
         }
 
-        #\Kint::dump($storageKey, $dict);
+        //\Kint::dump($storageKey, $dict);
 
         $redis->hmset($storageKey, $dict);
 
         $redis->sadd($flushToDbQueueKey, [$storageKey]);
 
         $countNumberRecieved = $redis->publish(RedStor::CHANNEL_QUEUE_FLUSHTODB, $redis->scard($flushToDbQueueKey));
-        if($countNumberRecieved == 0){
+        if (0 == $countNumberRecieved) {
             // If a tree falls in a forest, and nobody hears it?
         }
 

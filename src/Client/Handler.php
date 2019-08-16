@@ -49,6 +49,7 @@ class Handler
         $this->__attachToConnection();
 
         $this->handlerActions = [
+            new Actions\AuthAction($this->loop, $this->encoder, $this->decoder, $this->redis),
             new Actions\ModelAddColumn($this->loop, $this->encoder, $this->decoder, $this->redis),
             new Actions\ModelCreateAction($this->loop, $this->encoder, $this->decoder, $this->redis),
             new Actions\ModelDescribeAction($this->loop, $this->encoder, $this->decoder, $this->redis),
@@ -92,12 +93,7 @@ class Handler
                 ));
             }
 
-            if (in_array($parsedData[0], $this->passthru->getPassthruCommands(), true)) {
-                $this->passthru->passthru($this->connection, $parsedData);
-
-                return;
-            }
-
+            // Intercept our handlers for our function calls
             foreach ($this->handlerActions as $handlerAction) {
                 if ($handlerAction->getCommand() == $parsedData[0]) {
                     $handlerAction->handle($this->connection, $parsedData);
@@ -106,6 +102,14 @@ class Handler
                 }
             }
 
+            // Pass the rest through to Redis.
+            if (in_array($parsedData[0], $this->passthru->getPassthruCommands(), true)) {
+                $this->passthru->passthru($this->connection, $parsedData);
+
+                return;
+            }
+
+            // No dice? Explode.
             $this->encoder->sendError($this->connection, sprintf('Sorry, %s is not a valid command.', $parsedData[0]));
         } catch (PredisException $exception) {
             $this->logger->critical(

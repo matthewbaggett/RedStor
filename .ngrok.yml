@@ -1,0 +1,7 @@
+region: eu
+tunnels:
+  gateway:
+    proto: http
+    addr: 127.0.0.54:80
+    hostname: redstor.eu.ngrok.io
+    host_header: baaz.local

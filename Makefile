@@ -64,3 +64,10 @@ deploy-demo-site:
 
 purge-demo-site:
 	echo "I am another fish."
+
+ngrok:
+	ngrok \
+		start \
+			-config ~/.ngrok2/ngrok.yml \
+			-config .ngrok.yml \
+				gateway
