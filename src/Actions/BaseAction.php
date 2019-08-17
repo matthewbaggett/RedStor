@@ -30,4 +30,49 @@ class BaseAction
         $this->decoder = $handler->getDecoder();
         $this->redis = $handler->getRedis();
     }
+
+    public function allowAnonymousUse(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return Handler
+     */
+    public function getHandler(): Handler
+    {
+        return $this->handler;
+    }
+
+    /**
+     * @return LoopInterface
+     */
+    public function getLoop(): LoopInterface
+    {
+        return $this->loop;
+    }
+
+    /**
+     * @return Encoder
+     */
+    public function getEncoder(): Encoder
+    {
+        return $this->encoder;
+    }
+
+    /**
+     * @return Decoder
+     */
+    public function getDecoder(): Decoder
+    {
+        return $this->decoder;
+    }
+
+    /**
+     * @return PredisClient
+     */
+    public function getRedis(): PredisClient
+    {
+        return $this->redis;
+    }
 }

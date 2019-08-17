@@ -9,10 +9,17 @@ class State
     /** @var string */
     protected $loggedInUser;
 
+    public function isLoggedIn() : bool
+    {
+        return !empty($this->getLoggedInApp())
+            && !empty($this->getLoggedInUser())
+            ;
+    }
+
     /**
      * @return string
      */
-    public function getLoggedInApp(): string
+    public function getLoggedInApp(): ?string
     {
         return $this->loggedInApp;
     }
@@ -32,7 +39,7 @@ class State
     /**
      * @return string
      */
-    public function getLoggedInUser(): string
+    public function getLoggedInUser(): ?string
     {
         return $this->loggedInUser;
     }

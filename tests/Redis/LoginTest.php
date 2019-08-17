@@ -22,32 +22,30 @@ class LoginTest extends RedStorTest
         $this->assertTrue(
             $this->redis->login(self::TestApp, self::Username, self::Password)
         );
-        $this->assertEquals("OK", $this->redis->set("test:" . UUID::v4(), "Try to set a key in this logged-in-state"));
+        $this->assertEquals('OK', $this->redis->set('test:'.UUID::v4(), 'Try to set a key in this logged-in-state'));
     }
 
-    public function testLoginBad_InvalidPassword()
+    public function testLoginBadInvalidPassword()
     {
         $this->assertFalse(
             $this->redis->login(self::TestApp, self::Username, $this->faker()->password)
         );
-        $this->assertEquals("-FAIL", $this->redis->set("test:" . UUID::v4(), "Try to set a key in this logged-in-state"));
+        $this->assertEquals('-FAIL', $this->redis->set('test:'.UUID::v4(), 'Try to set a key in this logged-in-state'));
     }
 
-    public function testLoginBad_InvalidUsername()
+    public function testLoginBadInvalidUsername()
     {
         $this->assertFalse(
             $this->redis->login(self::TestApp, $this->faker()->userName, self::Password)
         );
-        $this->assertEquals("-FAIL", $this->redis->set("test:" . UUID::v4(), "Try to set a key in this logged-in-state"));
-
+        $this->assertEquals('-FAIL', $this->redis->set('test:'.UUID::v4(), 'Try to set a key in this logged-in-state'));
     }
 
-    public function testLoginBad_InvalidAppName()
+    public function testLoginBadInvalidAppName()
     {
         $this->assertFalse(
             $this->redis->login($this->faker()->company, self::Username, self::Password)
         );
-        $this->assertEquals("-FAIL", $this->redis->set("test:" . UUID::v4(), "Try to set a key in this logged-in-state"));
-
+        $this->assertEquals('-FAIL', $this->redis->set('test:'.UUID::v4(), 'Try to set a key in this logged-in-state'));
     }
 }

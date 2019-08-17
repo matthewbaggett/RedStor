@@ -6,6 +6,11 @@ use React\Socket\ConnectionInterface;
 
 class RestartAction extends BaseAction implements ActionInterface
 {
+    public function allowAnonymousUse(): bool
+    {
+        return true;
+    }
+
     public function getCommand(): string
     {
         return 'RESTART';

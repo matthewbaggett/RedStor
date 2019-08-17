@@ -47,6 +47,7 @@ class RedStorClient extends Client
     public function ping($message = null)
     {
         @list($pong, $replyMessage) = parent::ping($message);
+        \Kint::dump($pong, $replyMessage);
         if (!$replyMessage) {
             return true;
         }

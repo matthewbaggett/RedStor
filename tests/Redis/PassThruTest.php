@@ -31,6 +31,7 @@ class PassThruTest extends RedStorTest
 
     public function testInts()
     {
+        \Kint::dump($this->redis->incr($this->keys[0]));
         $this->assertEquals(1, $this->redis->incr($this->keys[0]));
         $this->assertEquals(0, $this->redis->decr($this->keys[0]));
         $this->assertEquals(3, $this->redis->incrby($this->keys[0], 3));

@@ -7,6 +7,11 @@ use RedStor\RedStor;
 
 class AuthAction extends BaseAction implements ActionInterface
 {
+    public function allowAnonymousUse(): bool
+    {
+        return true;
+    }
+
     public function getCommand(): string
     {
         return 'AUTH';
@@ -30,6 +35,11 @@ class AuthAction extends BaseAction implements ActionInterface
                     password_hash($password, PASSWORD_DEFAULT)
                 );
             }
+
+            $this->getHandler()->getState()
+                ->setLoggedInApp($appname)
+                ->setLoggedInUser($username)
+            ;
 
             $this->encoder->sendInline(
                 $connection,

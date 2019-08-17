@@ -280,7 +280,11 @@ class Handler
             // Intercept our handlers for our function calls
             foreach ($this->handlerActions as $handlerAction) {
                 if ($handlerAction->getCommand() == $parsedData[0]) {
-                    $handlerAction->handle($this->connection, $parsedData);
+                    if ($this->getState()->isLoggedIn() || $handlerAction->allowAnonymousUse()) {
+                        $handlerAction->handle($this->connection, $parsedData);
+                    } else {
+                        $this->encoder->sendError($this->connection, sprintf('Cant call %s without being AUTHenticated.', $parsedData[0]));
+                    }
 
                     return;
                 }
@@ -288,7 +292,11 @@ class Handler
 
             // Pass the rest through to Redis.
             if (in_array($parsedData[0], $this->passthru->getPassthruCommands(), true)) {
-                $this->passthru->passthru($this->connection, $parsedData);
+                if ($this->getState()->isLoggedIn()) {
+                    $this->passthru->passthru($this->connection, $parsedData);
+                } else {
+                    $this->encoder->sendError($this->connection, sprintf('Cant call %s without being AUTHenticated.', $parsedData[0]));
+                }
 
                 return;
             }
