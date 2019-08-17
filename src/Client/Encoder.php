@@ -33,7 +33,7 @@ class Encoder
                 trim($debugData)
             ));
         }
-        #\Kint::dump($data);
+        \Kint::dump($data);
         $connection->write($data);
     }
 

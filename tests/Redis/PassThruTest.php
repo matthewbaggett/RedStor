@@ -31,6 +31,8 @@ class PassThruTest extends RedStorTest
 
     public function testStrings()
     {
+        \Kint::dump($this->redis->set($this->keys[9], "fuckaroo"));
+
         $string = 'This is a string';
         $this->assertEquals('OK', $this->redis->set($this->keys[0], $string));
         $this->assertEquals($string, $this->redis->get($this->keys[0]));

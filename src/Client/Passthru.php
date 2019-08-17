@@ -40,14 +40,23 @@ class Passthru
         return array_keys($version->getSupportedCommands());
     }
 
+    public function resetConnection() : void
+    {
+        echo "RESETTING CONNECTION\n";
+        $this->client->disconnect();
+        $this->client->connect();
+    }
+
     public function passthru(ConnectionInterface $connection, $passthruCommand)
     {
+        $this->resetConnection();
         //\Kint::dump($passthruCommand);
         $command = array_shift($passthruCommand);
-        //\Kint::dump($command, $passthruCommand);
+        #\Kint::dump($command, $passthruCommand);
+
         try {
             $serverResponse = $this->client->__call($command, $passthruCommand);
-            //\Kint::dump($serverResponse);
+            \Kint::dump($serverResponse);
             if ($serverResponse instanceof Status) {
                 $connection->write('+OK'.self::REDIS_SEPERATOR);
             } else {
@@ -60,8 +69,9 @@ class Passthru
                 }
             }
         } catch (ServerException | ConnectionException $exception) {
-            $this->logger->critical(sprintf("%s: %s", get_class($exception), $exception->getMessage()));
-            $this->encoder->sendError($connection, $exception->getMessage());
+            $messageToSend = sprintf('%s: %s', get_class($exception), $exception->getMessage());
+            $this->logger->critical($messageToSend);
+            $this->encoder->sendError($connection, $messageToSend);
         }
     }
 }

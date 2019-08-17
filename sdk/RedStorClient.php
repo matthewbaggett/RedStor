@@ -23,17 +23,21 @@ class RedStorClient extends Client
 
     public function __construct($parameters = null, $options = null)
     {
-        $this->cachedParameters = $parameters;
-        $this->cachedOptions = $options;
-        Factory::define(RedStorProfile::class, RedStorProfile::class);
-        if (!$options) {
-            $options = [];
-        }
-        $options = array_merge($options, [
+        $defaultOptions = [
             'timeout' => 2.0,
             'read_write_timeout' => 2.0,
             'profile' => RedStorProfile::class,
-        ]);
+        ];
+        Factory::define(RedStorProfile::class, RedStorProfile::class);
+        if ($options) {
+            $options = array_merge($defaultOptions, $options);
+        } else {
+            $options = $defaultOptions;
+        }
+
+        $this->cachedParameters = $parameters;
+        $this->cachedOptions = $options;
+
         parent::__construct($parameters, $options);
     }
 
