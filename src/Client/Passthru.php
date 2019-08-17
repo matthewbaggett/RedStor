@@ -2,6 +2,7 @@
 
 namespace RedStor\Client;
 
+use Predis\Connection\ConnectionException;
 use Predis\Profile\RedisVersion320;
 use Predis\Response\ServerException;
 use Predis\Response\Status;
@@ -43,7 +44,7 @@ class Passthru
     {
         //\Kint::dump($passthruCommand);
         $command = array_shift($passthruCommand);
-
+        //\Kint::dump($command, $passthruCommand);
         try {
             $serverResponse = $this->client->__call($command, $passthruCommand);
             //\Kint::dump($serverResponse);
@@ -58,8 +59,12 @@ class Passthru
                     $this->encoder->writeString($connection, $serverResponse);
                 }
             }
-        } catch (ServerException $exception) {
-            $connection->write("-{$exception->getMessage()}".self::REDIS_SEPERATOR);
+        } catch (ServerException $serex) {
+            $this->logger->critical($serex->getMessage());
+            $this->encoder->sendError($serex->getMessage());
+        } catch (ConnectionException $conex) {
+            $this->logger->critical($conex->getMessage());
+            $this->encoder->sendError($conex->getMessage());
         }
     }
 }

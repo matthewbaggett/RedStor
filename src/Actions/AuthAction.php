@@ -21,12 +21,12 @@ class AuthAction extends BaseAction implements ActionInterface
     {
         list($method, $credentials) = $parsedData;
         list($appname, $username, $password) = explode(':', $credentials, 3);
-        \Kint::dump($appname, $username, $password);
+        #\Kint::dump($appname, $username, $password);
         $authMatching = $this->redis->hget(
             sprintf(RedStor::KEY_AUTH_APP, $appname),
             $username
         );
-        \Kint::dump($authMatching);
+        #\Kint::dump($authMatching);
         if (password_verify($password, $authMatching)) {
             if (password_needs_rehash($authMatching, PASSWORD_DEFAULT)) {
                 $this->redis->hset(
@@ -43,16 +43,29 @@ class AuthAction extends BaseAction implements ActionInterface
 
             $this->getHandler()->getLogger()->info(sprintf('Login successful as %s/%s.', $appname, $username));
 
+            $this->getHandler()->getRedis()->publish(RedStor::CHANNEL_LOGIN_SUCCESS, json_encode([
+                'appname' => $appname,
+                'username' => $username,
+            ]));
+
             $this->encoder->sendInline(
                 $connection,
-                "+AUTH Hello {$appname}/{$username}!."
+                "AUTH Hello {$appname}/{$username} !"
             );
         } else {
             $this->getHandler()->getLogger()->warning(sprintf('Login failed as %s/%s.', $appname, $username));
 
-            $this->encoder->sendInline(
+            $this->getHandler()->getRedis()->publish(RedStor::CHANNEL_LOGIN_FAILURES, json_encode([
+                'appname' => $appname,
+                'username' => $username,
+            ]));
+
+            // Waste my time 2019
+            sleep(3);
+
+            $this->encoder->sendError(
                 $connection,
-                "-AUTH Credentials {$appname}/{$username} invalid."
+                "Credentials {$appname}/{$username} invalid."
             );
         }
     }

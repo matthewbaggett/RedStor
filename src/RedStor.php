@@ -21,6 +21,8 @@ class RedStor extends ⌬
     public const KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR_AVAILABLE = 'RedStor:RateLimit:%s:RequestsPerHourAvailable';
 
     public const CHANNEL_QUEUE_FLUSHTODB = 'RedStor:Queues:FlushToDB';
+    public const CHANNEL_LOGIN_SUCCESS = 'RedStor:Login:Successes';
+    public const CHANNEL_LOGIN_FAILURES = 'RedStor:Login:Failures';
 
     public function __construct($options = [])
     {

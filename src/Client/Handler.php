@@ -188,9 +188,10 @@ class Handler
                 if ($handlerAction->getCommand() == $parsedData[0]) {
                     if ($this->getState()->isLoggedIn() || $handlerAction->allowAnonymousUse()) {
                         $handlerAction->handle($this->connection, $parsedData);
-                    } else {
-                        $this->encoder->sendError($this->connection, sprintf('Cant call %s without being AUTHenticated.', $parsedData[0]));
+
+                        return;
                     }
+                    $this->encoder->sendError($this->connection, sprintf('Cant call %s without being AUTHenticated.', $parsedData[0]));
 
                     return;
                 }
@@ -200,9 +201,10 @@ class Handler
             if (in_array($parsedData[0], $this->passthru->getPassthruCommands(), true)) {
                 if ($this->getState()->isLoggedIn()) {
                     $this->passthru->passthru($this->connection, $parsedData);
-                } else {
-                    $this->encoder->sendError($this->connection, sprintf('Cant call %s without being AUTHenticated.', $parsedData[0]));
+
+                    return;
                 }
+                $this->encoder->sendError($this->connection, sprintf('Cant call %s without being AUTHenticated.', $parsedData[0]));
 
                 return;
             }

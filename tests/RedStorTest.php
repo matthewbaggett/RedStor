@@ -2,6 +2,7 @@
 
 namespace RedStor\Tests;
 
+use Predis\Client as PredisClient;
 use Predis\Connection\ConnectionException;
 use RedStor\RedStor;
 use RedStor\SDK\RedStorClient;
@@ -38,7 +39,7 @@ abstract class RedStorTest extends TestCase
         self::login($this->redis);
     }
 
-    public static function resetRedis(RedStorClient $redis)
+    public static function resetRedis(RedStorClient $redis): void
     {
         $redis->flushall();
         $redis->restart();
@@ -52,16 +53,34 @@ abstract class RedStorTest extends TestCase
                 usleep(1000);
             }
         }
-        $redis->getPredis()->hset(sprintf(RedStor::KEY_AUTH_APP, RedStorTest::DEMO_APP), RedStorTest::DEMO_USERNAME, password_hash(RedStorTest::DEMO_PASSWORD, PASSWORD_DEFAULT));
-        $redis->getPredis()->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR, RedStorTest::DEMO_APP), 10000);
-        $redis->getPredis()->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR_AVAILABLE, RedStorTest::DEMO_APP), 10000);
+        self::assertDemoAccount($redis);
     }
 
-    protected static function login(RedStorClient $redis, string $app = self::DEMO_APP, string $username = self::DEMO_USERNAME, string $password = self::DEMO_PASSWORD)
+    public static function getDirectRedis(): PredisClient
+    {
+        $env = array_merge($_ENV, $_SERVER);
+        ksort($env);
+        // Since we can't actually call hset or set without already been auth'd,
+        // and to be authed we need to call these functions,
+        // lets dance around and talk directly to redis for a moment
+        $directRedis = new PredisClient($env['REDIS_HOST']);
+
+        return $directRedis;
+    }
+
+    public static function assertDemoAccount(RedStorClient $redis): void
+    {
+        $directRedis = self::getDirectRedis();
+        $directRedis->hset(sprintf(RedStor::KEY_AUTH_APP, RedStorTest::DEMO_APP), RedStorTest::DEMO_USERNAME, password_hash(RedStorTest::DEMO_PASSWORD, PASSWORD_DEFAULT));
+        $directRedis->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR, RedStorTest::DEMO_APP), 10000);
+        $directRedis->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR_AVAILABLE, RedStorTest::DEMO_APP), 10000);
+    }
+
+    protected static function login(RedStorClient $redis, string $app = self::DEMO_APP, string $username = self::DEMO_USERNAME, string $password = self::DEMO_PASSWORD): void
     {
         $loginSuccess = $redis->login($app, $username, $password);
         printf(
-            'Logging in as %s/%s... %s',
+            'Logging in as %s (%s)... %s'.PHP_EOL,
             $app,
             $username,
             $loginSuccess ? 'Successful' : 'Failure'
