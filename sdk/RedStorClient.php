@@ -40,14 +40,14 @@ class RedStorClient extends Client
         $authRequest = sprintf('%s:%s:%s', $app, $username, $password);
         /** @var Status $authResponse */
         $authResponse = $this->auth($authRequest);
-
+\Kint::dump($authResponse->getPayload());
         return '+AUTH' == substr($authResponse->getPayload(), 0, 5);
     }
 
     public function ping($message = null)
     {
         @list($pong, $replyMessage) = parent::ping($message);
-        \Kint::dump($pong, $replyMessage);
+        //\Kint::dump($pong, $replyMessage);
         if (!$replyMessage) {
             return true;
         }

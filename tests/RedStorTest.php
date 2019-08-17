@@ -14,6 +14,10 @@ abstract class RedStorTest extends TestCase
     /** @var RedStorClient */
     protected $redis;
 
+    const DEMO_APP='Demo';
+    const DEMO_USERNAME='demo@redstor';
+    const DEMO_PASSWORD='redstor';
+
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -23,16 +27,29 @@ abstract class RedStorTest extends TestCase
         ]);
         self::resetRedis(self::$staticRedis);
 
-        self::$staticRedis->login('Demo', 'demo@redstor', 'redstor');
+        self::login(self::$staticRedis);
     }
 
-    public function setUp(): void
+    protected static function login(RedStorClient $redis, string $app = self::DEMO_APP, string $username = self::DEMO_USERNAME, string $password = self::DEMO_PASSWORD){
+        $loginSuccess = $redis->login($app, $username, $password);
+        printf(
+            "Logging in as %s/%s... %s",
+             $app, $username,
+            $loginSuccess ? 'Successful' : 'Failure'
+        );
+
+        if(!$loginSuccess){
+            throw new \Exception("Login did not succeed with details {$app}/{$username} ({$password})");
+        }
+    }
+
+    public function     setUp(): void
     {
         parent::setUp();
         $this->redis = new RedStorClient([
             'host' => 'redstor',
         ]);
-        $this->redis->login('Demo', 'demo@redstor', 'redstor');
+        self::login($this->redis);
     }
 
     public static function resetRedis(RedStorClient $redis)
@@ -49,8 +66,8 @@ abstract class RedStorTest extends TestCase
                 usleep(1000);
             }
         }
-        $redis->hset(sprintf(RedStor::KEY_AUTH_APP, 'Demo'), 'demo@redstor', '$2y$10$VHoTQjWEBDQgc6n01h.VFOv9DiigXpav8rMCVWV9ARsHTqQ3zYro2');
-        $redis->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR, 'Demo'), 10000);
-        $redis->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR_AVAILABLE, 'Demo'), 10000);
+        $redis->getPredis()->hset(sprintf(RedStor::KEY_AUTH_APP, RedStorTest::DEMO_APP), RedStorTest::DEMO_USERNAME, password_hash(RedStorTest::DEMO_PASSWORD, PASSWORD_DEFAULT));
+        $redis->getPredis()->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR, RedStorTest::DEMO_APP), 10000);
+        $redis->getPredis()->set(sprintf(RedStor::KEY_LIMIT_RATELIMIT_REQUESTSPERHOUR_AVAILABLE, RedStorTest::DEMO_APP), 10000);
     }
 }

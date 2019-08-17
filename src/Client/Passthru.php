@@ -2,11 +2,11 @@
 
 namespace RedStor\Client;
 
-use Predis\Client;
 use Predis\Profile\RedisVersion320;
 use Predis\Response\ServerException;
 use Predis\Response\Status;
 use React\Socket\ConnectionInterface;
+use RedStor\SDK\RedStorClient as Client;
 use ⌬\Log\Logger;
 
 class Passthru

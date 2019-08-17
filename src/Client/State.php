@@ -9,7 +9,7 @@ class State
     /** @var string */
     protected $loggedInUser;
 
-    public function isLoggedIn() : bool
+    public function isLoggedIn(): bool
     {
         return !empty($this->getLoggedInApp())
             && !empty($this->getLoggedInUser())

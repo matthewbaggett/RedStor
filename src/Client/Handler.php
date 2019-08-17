@@ -79,18 +79,6 @@ class Handler
     }
 
     /**
-     * @param LoopInterface $loop
-     *
-     * @return Handler
-     */
-    public function setLoop(LoopInterface $loop): Handler
-    {
-        $this->loop = $loop;
-
-        return $this;
-    }
-
-    /**
      * @return LoggerInterface
      */
     public function getLogger(): LoggerInterface
@@ -119,35 +107,11 @@ class Handler
     }
 
     /**
-     * @param ConnectionInterface $connection
-     *
-     * @return Handler
-     */
-    public function setConnection(ConnectionInterface $connection): Handler
-    {
-        $this->connection = $connection;
-
-        return $this;
-    }
-
-    /**
      * @return Decoder
      */
     public function getDecoder(): Decoder
     {
         return $this->decoder;
-    }
-
-    /**
-     * @param Decoder $decoder
-     *
-     * @return Handler
-     */
-    public function setDecoder(Decoder $decoder): Handler
-    {
-        $this->decoder = $decoder;
-
-        return $this;
     }
 
     /**
@@ -159,35 +123,11 @@ class Handler
     }
 
     /**
-     * @param Encoder $encoder
-     *
-     * @return Handler
-     */
-    public function setEncoder(Encoder $encoder): Handler
-    {
-        $this->encoder = $encoder;
-
-        return $this;
-    }
-
-    /**
      * @return Passthru
      */
     public function getPassthru(): Passthru
     {
         return $this->passthru;
-    }
-
-    /**
-     * @param Passthru $passthru
-     *
-     * @return Handler
-     */
-    public function setPassthru(Passthru $passthru): Handler
-    {
-        $this->passthru = $passthru;
-
-        return $this;
     }
 
     /**
@@ -199,18 +139,6 @@ class Handler
     }
 
     /**
-     * @param Client $redis
-     *
-     * @return Handler
-     */
-    public function setRedis(Client $redis): Handler
-    {
-        $this->redis = $redis;
-
-        return $this;
-    }
-
-    /**
      * @return Actions\ActionInterface[]
      */
     public function getHandlerActions(): array
@@ -219,35 +147,11 @@ class Handler
     }
 
     /**
-     * @param Actions\ActionInterface[] $handlerActions
-     *
-     * @return Handler
-     */
-    public function setHandlerActions(array $handlerActions): Handler
-    {
-        $this->handlerActions = $handlerActions;
-
-        return $this;
-    }
-
-    /**
      * @return State
      */
     public function getState(): State
     {
         return $this->state;
-    }
-
-    /**
-     * @param State $state
-     *
-     * @return Handler
-     */
-    public function setState(State $state): Handler
-    {
-        $this->state = $state;
-
-        return $this;
     }
 
     protected function receiveClientMessage($data)
@@ -271,7 +175,9 @@ class Handler
             } else {
                 $this->logger->info(sprintf(
                     '[%s] => %s (%s)',
-                    $this->connection->getRemoteAddress(),
+                    $this->getState()->isLoggedIn()
+                        ? $this->getState()->getLoggedInApp().'/'.$this->getState()->getLoggedInUser()
+                        : $this->connection->getRemoteAddress(),
                     $displayableData,
                     trim($debugData),
                 ));

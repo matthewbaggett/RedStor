@@ -41,14 +41,18 @@ class AuthAction extends BaseAction implements ActionInterface
                 ->setLoggedInUser($username)
             ;
 
+            $this->getHandler()->getLogger()->info(sprintf('Login successful as %s/%s.', $appname, $username));
+
             $this->encoder->sendInline(
                 $connection,
-                "+AUTH Hello {$username}!"
+                "+AUTH Hello {$appname}/{$username}!."
             );
         } else {
+            $this->getHandler()->getLogger()->warning(sprintf('Login failed as %s/%s.', $appname, $username));
+
             $this->encoder->sendInline(
                 $connection,
-                '-AUTH Credentials invalid.'
+                "-AUTH Credentials {$appname}/{$username} invalid."
             );
         }
     }
