@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
 use RedStor\Actions;
+use RedStor\RedStor;
 use ⌬\Log\Logger;
 
 class Handler
@@ -170,7 +171,7 @@ class Handler
             $parsedData = $this->decoder->decode($data);
 
             $displayableData = trim(implode(' ', $parsedData));
-            if (in_array($displayableData, ['PING'], true)) {
+            if (in_array($displayableData, RedStor::SILENCED_COMMANDS, true)) {
                 // suppress these messages.
             } else {
                 $this->logger->info(sprintf(

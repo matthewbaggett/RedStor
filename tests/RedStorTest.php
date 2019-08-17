@@ -79,12 +79,13 @@ abstract class RedStorTest extends TestCase
     protected static function login(RedStorClient $redis, string $app = self::DEMO_APP, string $username = self::DEMO_USERNAME, string $password = self::DEMO_PASSWORD): void
     {
         $loginSuccess = $redis->login($app, $username, $password);
-        printf(
-            'Logging in as %s (%s)... %s'.PHP_EOL,
-            $app,
-            $username,
-            $loginSuccess ? 'Successful' : 'Failure'
-        );
+
+        //printf(
+        //    'Logging in as %s (%s)... %s'.PHP_EOL,
+        //    $app,
+        //    $username,
+        //    $loginSuccess ? 'Successful' : 'Failure'
+        //);
 
         if (!$loginSuccess) {
             throw new \Exception("Login did not succeed with details {$app}/{$username} ({$password})");

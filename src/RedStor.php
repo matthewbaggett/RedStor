@@ -24,6 +24,8 @@ class RedStor extends ⌬
     public const CHANNEL_LOGIN_SUCCESS = 'RedStor:Login:Successes';
     public const CHANNEL_LOGIN_FAILURES = 'RedStor:Login:Failures';
 
+    public const SILENCED_COMMANDS = ['PING'];
+
     public function __construct($options = [])
     {
         $this->isSessionsEnabled = false;

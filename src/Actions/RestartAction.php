@@ -8,6 +8,8 @@ class RestartAction extends BaseAction implements ActionInterface
 {
     public function allowAnonymousUse(): bool
     {
+        // @todo this is bad. bad bad bad.
+        // But we need to have a superadmin level before I can do something more sensible.
         return true;
     }
 

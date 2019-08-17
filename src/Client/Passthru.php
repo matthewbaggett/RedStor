@@ -59,12 +59,9 @@ class Passthru
                     $this->encoder->writeString($connection, $serverResponse);
                 }
             }
-        } catch (ServerException $serex) {
-            $this->logger->critical($serex->getMessage());
-            $this->encoder->sendError($serex->getMessage());
-        } catch (ConnectionException $conex) {
-            $this->logger->critical($conex->getMessage());
-            $this->encoder->sendError($conex->getMessage());
+        } catch (ServerException | ConnectionException $exception) {
+            $this->logger->critical(sprintf("%s: %s", get_class($exception), $exception->getMessage()));
+            $this->encoder->sendError($connection, $exception->getMessage());
         }
     }
 }

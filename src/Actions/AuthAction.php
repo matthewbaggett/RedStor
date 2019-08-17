@@ -21,12 +21,12 @@ class AuthAction extends BaseAction implements ActionInterface
     {
         list($method, $credentials) = $parsedData;
         list($appname, $username, $password) = explode(':', $credentials, 3);
-        #\Kint::dump($appname, $username, $password);
+        //\Kint::dump($appname, $username, $password);
         $authMatching = $this->redis->hget(
             sprintf(RedStor::KEY_AUTH_APP, $appname),
             $username
         );
-        #\Kint::dump($authMatching);
+        //\Kint::dump($authMatching);
         if (password_verify($password, $authMatching)) {
             if (password_needs_rehash($authMatching, PASSWORD_DEFAULT)) {
                 $this->redis->hset(
@@ -60,13 +60,17 @@ class AuthAction extends BaseAction implements ActionInterface
                 'username' => $username,
             ]));
 
-            // Waste my time 2019
-            sleep(3);
-
+            // Log the failed attempt.
             $this->encoder->sendError(
                 $connection,
                 "Credentials {$appname}/{$username} invalid."
             );
+
+            // Waste my time 2019
+            sleep(3);
+
+            // And disconnect 'em.
+            $connection->close();
         }
     }
 }

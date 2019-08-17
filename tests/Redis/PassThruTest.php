@@ -29,15 +29,6 @@ class PassThruTest extends RedStorTest
         parent::tearDown();
     }
 
-    public function testInts()
-    {
-        $this->markTestSkipped("INCR doesn't seem to want to work.");
-        $this->assertEquals(1, $this->redis->incr($this->keys[0]));
-        $this->assertEquals(0, $this->redis->decr($this->keys[0]));
-        $this->assertEquals(3, $this->redis->incrby($this->keys[0], 3));
-        $this->assertEquals(-2, $this->redis->decrby($this->keys[0], 5));
-    }
-
     public function testStrings()
     {
         $string = 'This is a string';
@@ -58,5 +49,13 @@ class PassThruTest extends RedStorTest
             ['Pears', 'Hats', 'Apples'],
             $this->redis->mget([$this->keys[1], $this->keys[2], $this->keys[0]])
         );
+    }
+
+    public function testInts()
+    {
+        $this->assertEquals(1, $this->redis->incr($this->keys[0]));
+        $this->assertEquals(0, $this->redis->decr($this->keys[0]));
+        $this->assertEquals(3, $this->redis->incrby($this->keys[0], 3));
+        $this->assertEquals(-2, $this->redis->decrby($this->keys[0], 5));
     }
 }

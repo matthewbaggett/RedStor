@@ -3,6 +3,7 @@
 namespace RedStor\Client;
 
 use React\Socket\ConnectionInterface;
+use RedStor\RedStor;
 use ⌬\Log\Logger;
 
 class Encoder
@@ -24,7 +25,7 @@ class Encoder
         $debugData = str_replace("\r", '\\r', $debugData);
         $decodedData = (new Decoder())->decode($data);
         $displayableData = is_array($decodedData) ? implode(' ', $decodedData) : "\"{$decodedData}\"";
-        if (!in_array(trim($displayableData), ['PING'], true)) {
+        if (!in_array(trim($displayableData), RedStor::SILENCED_COMMANDS, true)) {
             $this->logger->info(sprintf(
                 "[%s] <= %s (%s)\n",
                 $connection->getRemoteAddress(),
@@ -32,6 +33,7 @@ class Encoder
                 trim($debugData)
             ));
         }
+        #\Kint::dump($data);
         $connection->write($data);
     }
 
@@ -52,22 +54,37 @@ class Encoder
 
     public function sendInline(ConnectionInterface $connection, string $message): void
     {
-        $this->write($connection, "+{$message}".self::REDIS_SEPERATOR);
+        $this->write($connection, sprintf('+%s%s', $message, self::REDIS_SEPERATOR));
     }
 
     public function writeStrings(ConnectionInterface $connection, array $strings): void
     {
         $strings = array_filter($strings);
-        $output = '*'.count($strings).self::REDIS_SEPERATOR;
+        $output = sprintf('*%d%s', count($strings), self::REDIS_SEPERATOR);
         foreach ($strings as $string) {
-            $output .= '$'.strlen($string).self::REDIS_SEPERATOR.$string.self::REDIS_SEPERATOR;
+            $output .= sprintf(
+                '$%d%s%s%s',
+                strlen($string),
+                self::REDIS_SEPERATOR,
+                $string,
+                self::REDIS_SEPERATOR
+            );
         }
         $this->write($connection, $output);
     }
 
     public function writeString(ConnectionInterface $connection, string $string): void
     {
-        $this->write($connection, '$'.strlen($string).self::REDIS_SEPERATOR.$string.self::REDIS_SEPERATOR);
+        $this->write(
+            $connection,
+            sprintf(
+                '$%d%s%s%s',
+                strlen($string),
+                self::REDIS_SEPERATOR,
+                $string,
+                self::REDIS_SEPERATOR
+            )
+        );
     }
 
     public function writeNum(ConnectionInterface $connection, float $num): void

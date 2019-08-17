@@ -30,6 +30,8 @@ class RedStorClient extends Client
             $options = [];
         }
         $options = array_merge($options, [
+            'timeout' => 2.0,
+            'read_write_timeout' => 2.0,
             'profile' => RedStorProfile::class,
         ]);
         parent::__construct($parameters, $options);
