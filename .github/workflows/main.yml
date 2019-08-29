@@ -11,8 +11,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: Composer Install
       uses: MilesChou/composer-action@master
-      args: install
     - name: PHPUnit Tests
       uses: MilesChou/composer-action@master
-      args: test:unit
-    
+
