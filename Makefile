@@ -9,6 +9,7 @@ clean:
 	fi;
 
 tests: clean
+	docker-compose up -d
 	docker-compose scale redstor=1
 	docker-compose run --rm redstor \
 		vendor/bin/phpunit \
